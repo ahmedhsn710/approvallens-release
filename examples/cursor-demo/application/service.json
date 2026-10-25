@@ -1,0 +1,4 @@
+{
+  "network": { "timeoutSeconds": 10 },
+  "security": { "requireAuthentication": true }
+}

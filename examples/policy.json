@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "taskId": "inspect-dependencies",
+  "developerIntent": "Inspect dependencies in package.json without modifying files",
+  "grants": [{ "operation": "read_file", "path": "package.json" }]
+}

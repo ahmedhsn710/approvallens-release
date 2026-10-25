@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "taskId": "settings-demo",
+  "developerIntent": "Enable compilerOptions.strict while preserving compilerOptions.retries.",
+  "grants": [
+    { "operation": "read_file", "path": "package.json" },
+    { "operation": "read_file", "path": "settings.json" },
+    { "operation": "write_file", "path": "settings.json" }
+  ],
+  "evidence": [
+    {
+      "path": "settings.json",
+      "fields": {
+        "/compilerOptions/strict": "boolean",
+        "/compilerOptions/retries": "integer"
+      }
+    }
+  ],
+  "constraints": [
+    {
+      "id": "preserve-retries",
+      "kind": "preserve_field",
+      "path": "settings.json",
+      "field": "/compilerOptions/retries"
+    }
+  ]
+}

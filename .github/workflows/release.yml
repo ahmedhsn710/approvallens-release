@@ -1,0 +1,40 @@
+name: Release extension
+on:
+  workflow_dispatch:
+    inputs:
+      publish_openvsx:
+        description: "Publish to Open VSX (requires completed onboarding and OVSX_PAT)"
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  release:
+    if: github.ref == 'refs/heads/main'
+    environment: marketplace
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci
+      - run: npm run format:check && npm run typecheck && npm test && npm run build && npm run extension:package
+      - name: Create versioned GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p 'require("./packages/extension/package.json").version')
+          sha256sum artifacts/*.vsix > artifacts/SHA256SUMS.txt
+          gh release create "v$VERSION" artifacts/*.vsix artifacts/SHA256SUMS.txt --target "$GITHUB_SHA" --title "ApprovalLens $VERSION" --notes-file docs/RELEASE-NOTES.md
+      - name: Publish tested package to Open VSX
+        if: inputs.publish_openvsx
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+        run: |
+          test -n "$OVSX_PAT"
+          npx --no-install ovsx publish artifacts/*.vsix

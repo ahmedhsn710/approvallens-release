@@ -1,0 +1,10 @@
+{
+  "name": "@approvallens/mcp",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "zod": "4.6.7"
+  }
+}

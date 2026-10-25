@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "taskId": "application-demo",
+  "developerIntent": "Set network.timeoutSeconds to 30 while preserving security.requireAuthentication.",
+  "grants": [
+    { "operation": "read_file", "path": "package.json" },
+    { "operation": "read_file", "path": "service.json" },
+    { "operation": "write_file", "path": "service.json" }
+  ],
+  "evidence": [
+    {
+      "path": "service.json",
+      "fields": {
+        "/network/timeoutSeconds": "integer",
+        "/security/requireAuthentication": "boolean"
+      }
+    }
+  ],
+  "constraints": [
+    {
+      "id": "preserve-authentication",
+      "kind": "preserve_field",
+      "path": "service.json",
+      "field": "/security/requireAuthentication"
+    }
+  ]
+}

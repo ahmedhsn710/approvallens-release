@@ -1,0 +1,39 @@
+{
+  "name": "approvallens-release",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @approvallens/site --",
+    "build": "npm run build -w @approvallens/site",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "cursor:service": "node scripts/cursor-service.mjs",
+    "cursor:doctor": "node --import tsx packages/companion/src/doctor.ts",
+    "demo:setup": "node --import tsx scripts/demo-setup.ts",
+    "demo:ready": "node scripts/demo-ready.mjs",
+    "mcp:stdio": "node --import tsx packages/mcp/src/stdio.ts",
+    "extension:package": "mkdir -p artifacts && cd packages/extension && vsce package --no-dependencies --out ../../artifacts/approvallens-cursor-0.4.0.vsix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "9.6.0",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vscode/vsce": "4.0.0",
+    "ovsx": "1.3.0",
+    "prettier": "3.9.10",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "name": "approvallens-cursor",
+  "displayName": "ApprovalLens",
+  "description": "Native tool review activity and explicit one-time file approvals.",
+  "version": "0.4.0",
+  "publisher": "ahmedhsn710",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "main": "./extension.cjs",
+  "activationEvents": [
+    "onStartupFinished",
+    "onView:approvallens.activity"
+  ],
+  "categories": [
+    "Other"
+  ],
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "approvallens",
+          "title": "ApprovalLens",
+          "icon": "shield.svg"
+        }
+      ]
+    },
+    "views": {
+      "approvallens": [
+        {
+          "id": "approvallens.activity",
+          "name": "Activity"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "approvallens.copyPrompt",
+        "title": "ApprovalLens: Copy demo prompt"
+      },
+      {
+        "command": "approvallens.refresh",
+        "title": "ApprovalLens: Refresh",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "approvallens.inspect",
+        "title": "ApprovalLens: Inspect action",
+        "icon": "$(inspect)"
+      },
+      {
+        "command": "approvallens.approve",
+        "title": "ApprovalLens: Approve once",
+        "icon": "$(check)"
+      },
+      {
+        "command": "approvallens.reject",
+        "title": "ApprovalLens: Reject",
+        "icon": "$(close)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "approvallens.refresh",
+          "when": "view == approvallens.activity",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "approvallens.approve",
+          "when": "view == approvallens.activity && viewItem == pending",
+          "group": "inline"
+        },
+        {
+          "command": "approvallens.reject",
+          "when": "view == approvallens.activity && viewItem == pending",
+          "group": "inline"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "ApprovalLens",
+      "properties": {
+        "approvallens.socketPath": {
+          "type": "string",
+          "default": "",
+          "scope": "machine-overridable",
+          "description": "Absolute Unix socket path of the developer-owned local service."
+        }
+      }
+    }
+  },
+  "license": "MIT",
+  "files": [
+    "extension.cjs",
+    "shield.svg",
+    "README.md",
+    "LICENSE",
+    "evidence.cjs",
+    "prompts.cjs"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahmedhsn710/approvallens-release.git",
+    "directory": "packages/extension"
+  },
+  "homepage": "https://github.com/ahmedhsn710/approvallens-release",
+  "bugs": {
+    "url": "https://github.com/ahmedhsn710/approvallens-release/issues"
+  }
+}
