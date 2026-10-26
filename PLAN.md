@@ -10,28 +10,28 @@ Ship one professional source repository with shared logic, a hosted judge MCP, a
 - [x] Add stateless HTTP MCP and immutable judge fixtures.
 - [x] Add landing page, judge guide and privacy boundaries.
 - [x] Validate typecheck, production build and core tests.
-- [ ] Finish hosted transport regressions, extension packaging and fresh-checkout smoke tests.
-- [ ] Create the public release repository after secret/content audit.
+- [x] Finish hosted transport regressions, extension packaging and fresh-checkout smoke tests.
+- [x] Create the public release repository after secret/content audit.
 
 Exit: runnable clean checkout, reproducible package, truthful docs, no inherited credentials/state.
 
 ## Phase 2 — hosting and CI/CD
 
-- [ ] Connect GitHub repository to Vercel; root directory `apps/site`.
-- [ ] Verify public homepage, guide and MCP initialization/tool calls on production URL.
-- [ ] Provision a free durable Redis store for optional live spending admission.
-- [ ] Configure server-side Nebius credentials, exact model and private judge token.
-- [ ] Test one eligible LIVE request within the approved spending cap; record mode and outcome without sensitive payloads.
-- [ ] Enable automated checks and manual versioned extension release artifacts.
+- [x] Connect GitHub repository to Vercel; root directory `apps/site`.
+- [x] Verify public homepage, guide and MCP initialization/tool calls on production URL.
+- [x] Provision a free durable Redis store for optional live spending admission.
+- [x] Configure server-side Nebius credentials, exact model and private judge token.
+- [x] Test one eligible LIVE request within the approved spending cap; record mode and outcome without sensitive payloads.
+- [x] Enable automated checks and manual versioned extension release artifacts.
 
 Exit: judges can use remote MCP without starting a local server. Never label rules-only responses as live.
 
 ## Phase 3 — extension publication
 
-- [ ] Complete Eclipse account and Open VSX publisher agreement (account-owner step).
+- [x] Complete Eclipse account and Open VSX publisher agreement (account-owner step).
 - [ ] Create/verify namespace matching publisher `ahmedhsn710`.
-- [ ] Configure publishing token as GitHub environment secret; never commit it.
-- [ ] Publish tested VSIX; verify listing and install from registry in disposable Cursor project.
+- [x] Configure publishing token as GitHub environment secret; never commit it.
+- [ ] Publish tested VSIX and verify listing/download (done); verify installed package in an isolated Cursor profile.
 - [ ] Check clean install, safe approval, protected-field denial and cleanup.
 
 Fallback: a tested public GitHub VSIX release is usable while registry onboarding is pending. It is not a marketplace listing.

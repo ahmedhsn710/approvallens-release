@@ -6,7 +6,7 @@ An independent review layer for agent tool requests. ApprovalLens compares the *
 
 ## Try it
 
-[Live product page](https://approvallens-release.vercel.app) · [Judge guide](https://approvallens-release.vercel.app/guide) · [Download extension](https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.4.0)
+[Live product page](https://approvallens-release.vercel.app) · [Judge guide](https://approvallens-release.vercel.app/guide) · [Download extension](https://github.com/ahmedhsn710/approvallens-release/releases/latest)
 
 MCP endpoint: `https://approvallens-release.vercel.app/api/mcp`
 

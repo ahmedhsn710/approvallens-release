@@ -36,3 +36,7 @@ Official guide: https://github.com/EclipseFdn/open-vsx.org/wiki/Publishing-Exten
 The CI workflow checks formatting, types, tests, production build and extension package on pushes and PRs. Releases are manual and versioned to prevent accidental immutable registry publication. Bump package versions before a new release; do not overwrite a released version. If publishing fails after the GitHub release is created, use the already tested asset with the registry CLI rather than rerunning release creation blindly.
 
 GitHub release VSIX downloads are the immediate distribution fallback. A downloadable VSIX is not the same as a public marketplace listing. No Microsoft Marketplace or paid hosting is assumed.
+
+## Current deployment
+
+See [RELEASE-STATUS.md](RELEASE-STATUS.md) for verified URLs, live test evidence and external namespace-review status. The publishing token is configured in the `marketplace` environment. Open VSX trusted publishing requires namespace ownership and an active extension; after ownership verification, register this repository and the publishing workflow with the `marketplace` environment, then use `ovsx publish --trusted-publishing` with `id-token: write`. Do not remove the existing token until the replacement path has been tested.

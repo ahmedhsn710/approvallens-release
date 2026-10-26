@@ -1,23 +1,47 @@
-# ApprovalLens for Cursor — release preview 0.4.0
+# ApprovalLens for Cursor
 
-Project-wide native-hook activity, grouped by chat, with automatic review dialogs for eligible file mutations. Requires the separate ApprovalLens local service and project hooks. Installing this extension alone does not intercept tools.
+**Proof before permission.** Review native agent-tool activity by chat, inspect policy evidence, and decide on eligible waiting file changes.
 
-Set **ApprovalLens: Socket Path** in user settings, or use the generated sample project's workspace setting. Use `approvalMode: "wait"` in the developer-owned service configuration and re-run the project's hook setup for the 120-second hook timeout. The service holds an eligible action for up to 100 seconds, then denies it unless approved. Approval resumes the original waiting call; rejection, cancellation, disconnect and timeout deny it. File state is checked again before approval.
+[Product page](https://approvallens-release.vercel.app) · [Setup guide](https://github.com/ahmedhsn710/approvallens-release/blob/main/docs/NATIVE-GUARD.md) · [Source](https://github.com/ahmedhsn710/approvallens-release)
 
-The popup shows the chat ID, operation, target, proposal and reason. The sidebar groups conversations, shows pending counts and stable status rows, and offers inspect/review/reject actions. Old records lacking a chat ID remain in a separate legacy group. Titles are currently short chat IDs.
+## Install and try
 
-Native checks run first. Optional LIVE mode routes eligible mutations and configured critical reads to Nemotron, then shows validated findings for a human decision. Model failures and exhausted budgets deny the action. Raw file bodies are omitted; explicitly configured JSON field changes may be sent to Nebius. The modal shows evidence coverage and basis, not a guarantee of code correctness. Rules-only mode still reports NOT_MEASURED. Read/Write/Delete mappings remain deliberately narrow. Hook-delivered unsupported native operations are logged and blocked without an override. This does not pause all parallel activity in a chat, cover manual edits or Tab, or create an OS sandbox. Same-user processes remain within the trust boundary. Project hooks must stay enabled.
+Install `ahmedhsn710.approvallens-cursor` from the extension registry, or use the VSIX on [GitHub Releases](https://github.com/ahmedhsn710/approvallens-release/releases/latest).
 
-The compatibility `retry` mode still supports a 30-second identical-retry permit. No API keys belong in extension settings. macOS/Linux only; no marketplace release yet. See docs/NATIVE-GUARD.md in this repository for architecture, setup, tests, limits and uninstall steps.
+**The extension needs the separate local companion and project hooks. Installing it alone does not intercept tools.** For a disposable demonstration, clone the repository, install Node 24, then run:
 
-Built-in web search has model-dependent hook coverage gaps; the extension does not claim universal interception. Metadata-only hook receipts help distinguish absent events from rejected payloads.
+```sh
+npm ci
+npm run demo:ready -- /tmp/al-settings-demo
+```
 
-Live sessions stop after an invalid reviewer reply and retain that stop across service restarts. The shield reports LIVE STOPPED. There is no automatic retry or UI reset. Budget reservations are preserved.
+Choose a fresh destination. The launcher creates a sample, starts the local checker and opens Cursor. It does not call a model or approve a write. macOS/Linux only. Open the shield icon and copy one sample prompt at a time.
 
-Version 0.3.3 keeps service status visible above Activity groups and shows policy-disclosed JSON pointers, preserve checks and available model telemetry in the approval dialog and action tooltip. No policy or approval rules live in the presentation helper.
+## What you see
 
-Version 0.3.4 labels bounded local history in the approval evidence display. It contains same-conversation observations since service startup, not verified execution receipts or a complete chat transcript.
+- Activity grouped by available chat IDs, with stable status rows and pending counts.
+- A review dialog for eligible mutations: operation, target, explanation, evidence, limitations and model findings when available.
+- Explicit **Approve once** or **Reject** decisions. Cancellation, disconnect and timeout deny the request.
+- Service identity, rules-only/LIVE status, disclosed JSON fields and live-stop diagnostics.
 
-Version 0.3.5 lets the generated demo workspace select its local service socket without changing global Cursor settings. The socket setting remains machine-specific and is not synchronized.
+The service holds supported eligible operations for up to 100 seconds and rechecks the file before allowing the original call. Configure `approvalMode: "wait"` and the generated 120-second hook timeout. The extension's socket setting must point to the matching local service. The generated sample configures this per workspace.
 
-Version 0.3.6 shows the sample prompts in Activity when the generated project includes them. Clicking a prompt copies it. The extension still does not approve a write.
+## Review logic
+
+Deterministic scope and protected-field checks run first. Configured LIVE mode sends eligible requests to NVIDIA Nemotron through Nebius, validates the reply, and presents evidence to the human. Model output cannot override policy or grant execution. Failures and exhausted budgets deny native actions. Rules-only mode explicitly reports `NOT_MEASURED` for semantic review.
+
+No policy logic or API keys belong in the extension. Both MCP and the companion use the same review engine.
+
+## Coverage and privacy
+
+Supported mappings are deliberately narrow. Unsupported hook-delivered operations are logged and blocked. Built-in search can have hook-coverage gaps; manual edits, Tab and all parallel chat activity are not comprehensively intercepted. This is not an operating-system sandbox, and same-user processes remain inside the trust boundary.
+
+The extension itself sends no analytics or external telemetry. It displays activity from the local Unix-socket service. The companion retains local records in its configured state directory until removed by its operator. Optional LIVE review sends the configured intent, explanation and analyzed evidence to Nebius; raw write bodies are omitted, while explicitly disclosed JSON field changes may be included. No API key is stored in extension settings. See the [privacy and boundary guide](https://approvallens-release.vercel.app/privacy).
+
+A model error stops native LIVE review across restarts. Budget reservations remain preserved. Bounded conversation history is observation context, not verified execution receipts or a complete transcript.
+
+## Troubleshooting and removal
+
+Run `npm run cursor:doctor -- <config-file> <state-directory>` from the source checkout. Verify workspace trust, the service socket and the shield Activity view. For removal, stop the companion and remove only ApprovalLens-owned hook entries before uninstalling the extension; preserve other tools' settings. See the [full guide](https://github.com/ahmedhsn710/approvallens-release/blob/main/docs/NATIVE-GUARD.md).
+
+MIT licensed. Release preview; namespace verification status is shown by Open VSX.

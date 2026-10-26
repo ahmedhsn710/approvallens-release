@@ -2,7 +2,7 @@
   "name": "approvallens-cursor",
   "displayName": "ApprovalLens",
   "description": "Native tool review activity and explicit one-time file approvals.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "publisher": "ahmedhsn710",
   "engines": {
     "vscode": "^1.96.0"
