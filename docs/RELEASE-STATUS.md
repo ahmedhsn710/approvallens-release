@@ -16,7 +16,8 @@ The registry listing and download are public. The publisher is still marked unve
 
 - 229 automated tests passing across 23 files, including shared core, native guard, stdio MCP and hosted transport.
 - TypeScript check, formatting check, Next.js production build and isolated VSIX packaging pass.
-- GitHub checks and versioned release workflow succeeded.
+- GitHub checks and the v0.4.1 release workflow succeeded, including Open VSX upload.
+- The CI-produced v0.4.1 VSIX installed successfully in an isolated Cursor profile; Cursor listed `ahmedhsn710.approvallens-cursor@0.4.1`. This installation check does not claim a live chat interception test.
 - Public homepage and guide return HTTP 200.
 - Actual MCP SDK client initialized against the deployed endpoint, listed tools and reviewed all three samples: safe change → review in rules-only mode; protected-field change → block; ungranted file → block. Every result remains non-executable.
 - Fresh sample setup starts the local companion and passes policy location, hook registration, baseline, service identity, mode and version diagnostics. Extension activation and real Cursor chat behavior are separate manual checks, not implied by these diagnostics.
