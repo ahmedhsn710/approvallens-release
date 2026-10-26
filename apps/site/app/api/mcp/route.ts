@@ -19,14 +19,29 @@ export async function POST(request: Request) {
     return new Response("Invalid judge credential", { status: 401 });
   if (Number(request.headers.get("content-length") || 0) > 32768)
     return new Response("Request too large", { status: 413 });
-  let text: string;
+  // Bound bytes while reading, including requests without Content-Length.
+  const reader = request.body?.getReader();
+  const chunks: Uint8Array[] = [];
+  let size = 0;
   try {
-    text = await request.text();
+    if (reader) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > 32768) {
+          await reader.cancel();
+          return new Response("Request too large", { status: 413 });
+        }
+        chunks.push(value);
+      }
+    }
   } catch {
     return new Response("Invalid body", { status: 400 });
+  } finally {
+    reader?.releaseLock();
   }
-  if (Buffer.byteLength(text) > 32768)
-    return new Response("Request too large", { status: 413 });
+  const text = Buffer.concat(chunks).toString("utf8");
   let parsed: unknown;
   try {
     parsed = JSON.parse(text);

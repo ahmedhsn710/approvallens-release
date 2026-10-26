@@ -14,8 +14,9 @@ export function authorized(request: Request): boolean {
 }
 /** Atomic durable admission. A timeout is never refunded or retried. */
 export async function reserveRemoteCall(): Promise<boolean> {
-  const url = process.env.UPSTASH_REDIS_REST_URL,
-    token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  const url = process.env.UPSTASH_REDIS_REST_URL ?? process.env.KV_REST_API_URL,
+    token =
+      process.env.UPSTASH_REDIS_REST_TOKEN ?? process.env.KV_REST_API_TOKEN;
   const limit = Number(process.env.APPROVALLENS_MAX_LIVE_CALLS ?? "0");
   if (
     !url ||

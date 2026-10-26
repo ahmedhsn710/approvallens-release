@@ -6,6 +6,10 @@ An independent review layer for agent tool requests. ApprovalLens compares the *
 
 ## Try it
 
+[Live product page](https://approvallens-release.vercel.app) · [Judge guide](https://approvallens-release.vercel.app/guide) · [Download extension](https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.4.0)
+
+MCP endpoint: `https://approvallens-release.vercel.app/api/mcp`
+
 The hosted application provides a product page, judge guide and Streamable HTTP MCP endpoint at `/api/mcp`. It deliberately has no web execution dashboard. See [deployment instructions](docs/DEPLOYMENT.md) and [the judge walkthrough](docs/JUDGE-GUIDE.md).
 
 The public MCP uses an immutable synthetic fixture. It does not read your repository. Public requests run deterministic checks in `RULES_ONLY` mode. Configured judge credentials enable bounded Nebius review; missing configuration or exhausted budget fails closed.

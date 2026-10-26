@@ -7,3 +7,7 @@ Do not put real secrets in sample tool arguments. Keys remain server-side or in 
 Report security defects privately through GitHub private vulnerability reporting if enabled. Otherwise open a minimal issue asking for a private contact without including exploit details, credentials or private data. Do not post live tokens in issues.
 
 The extension package contains only its presentation code and assets; the native daemon is installed separately. Dependency audit results and remaining advisories should be checked for every release. Development packaging dependencies are not part of the hosted runtime or VSIX.
+
+## Packaging dependency advisory (26 October 2026)
+
+The production-only dependency audit reports no vulnerabilities. The extension packaging/publishing CLI dependency tree currently reports GHSA-xcx6-jx8p-x3h5 through Azure MSAL. This concerns Azure authorization-code flows; the release workflow uses VSIX packaging and Open VSX tokens, not Azure authentication. These development tools are excluded from the hosted runtime and VSIX. Upgrading VSCE to the latest available 4.0.0 did not remove the upstream advisory. Recheck before future releases; do not interpret the production audit as a clean audit of all development tools.

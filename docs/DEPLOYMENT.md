@@ -15,7 +15,7 @@ Set Production environment variables:
 - `NEBIUS_API_KEY`: existing dedicated project key, server-side only.
 - `NEBIUS_MODEL`: `nvidia/nemotron-3-super-120b-a12b`.
 - `APPROVALLENS_JUDGE_TOKEN`: strong private bearer token, supplied privately to judges.
-- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`: dedicated free Redis store REST credentials.
+- `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN`: dedicated free Redis store REST credentials. The Vercel integration’s automatically injected `KV_REST_API_URL` / `KV_REST_API_TOKEN` are also supported; no manual copying is needed.
 - `APPROVALLENS_MAX_LIVE_CALLS`: start with 3 for smoke testing; raising it requires budget review.
 
 Never use a temporary filesystem or process variable as a durable spending ledger. The Redis key `approvallens:hosted:v1:reservations` monotonically counts admitted model requests. Keep it across deploys. An exhausted or unavailable store blocks LIVE. Hard deterministic denials consume no model reservation. The call cap is not a provider-enforced dollar cap; output is capped at 1,800 tokens and requests at 32 KiB. Keep the Nebius project's own spend controls enabled.
