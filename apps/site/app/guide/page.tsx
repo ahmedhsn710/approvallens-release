@@ -27,8 +27,15 @@ export default function Guide() {
         <section>
           <h2>1. Install and enable</h2>
           <p>
-            Install ApprovalLens from Open VSX in Cursor. Open one trusted local
-            folder on macOS or Linux, then run{" "}
+            If your extension library still offers an older version,{" "}
+            <a href="https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.5.0">
+              download the 0.5.0 VSIX
+            </a>{" "}
+            and use Cursor’s Install from VSIX command.
+          </p>
+          <p>
+            Install ApprovalLens 0.5.0 or newer from Open VSX in Cursor. Open
+            one trusted local folder on macOS or Linux, then run{" "}
             <b>ApprovalLens: Enable for this workspace</b>. Confirm the setup.
             No repository clone, Node installation or terminal service is
             required.

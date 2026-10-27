@@ -3,42 +3,40 @@
 ## Public surfaces
 
 - Source: https://github.com/ahmedhsn710/approvallens-release
-- Product: https://approvallens-release.vercel.app
-- Judge guide: https://approvallens-release.vercel.app/guide
+- Product and setup: https://approvallens-release.vercel.app and `/guide`
 - MCP: https://approvallens-release.vercel.app/api/mcp (Streamable HTTP POST)
-- Extension: https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor
-- VSIX fallback: https://github.com/ahmedhsn710/approvallens-release/releases/latest
-- Publisher verification request: https://github.com/EclipseFdn/open-vsx.org/issues/14732
+- Extension listing: https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor
+- Versioned package: https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.5.0
+- Release workflow: https://github.com/ahmedhsn710/approvallens-release/actions/runs/40490580497
 
-The registry listing and download are public. The publisher is still marked unverified pending the external namespace review. OIDC publishing additionally requires namespace ownership, so it is not enabled yet. Publishing currently uses the approved `OVSX_PAT` secret in the GitHub `marketplace` environment.
+Open VSX now reports a **verified publisher**. The namespace request was closed as completed by a maintainer. Token-based publishing remains configured; OIDC migration has not been performed.
 
-## Validation performed
+The 0.5.0 release workflow passed every check and reported a successful Open VSX upload. Public registry propagation is being checked separately; use the versioned GitHub VSIX if the library still shows 0.4.1.
 
-- 238 automated tests passing across 25 files, including shared core, native guard, stdio MCP and hosted transport.
-- TypeScript check, formatting check, Next.js production build and isolated VSIX packaging pass.
-- GitHub checks and the v0.4.1 release workflow succeeded, including Open VSX upload.
-- The CI-produced v0.4.1 VSIX installed successfully in an isolated Cursor profile; Cursor listed `ahmedhsn710.approvallens-cursor@0.4.1`. This installation check does not claim a live chat interception test.
-- Public homepage and guide return HTTP 200.
-- Actual MCP SDK client initialized against the deployed endpoint, listed tools and reviewed all three samples: safe change → review in rules-only mode; protected-field change → block; ungranted file → block. Every result remains non-executable.
-- Fresh sample setup starts the local companion and passes policy location, hook registration, baseline, service identity, mode and version diagnostics. Extension activation and real Cursor chat behavior are separate manual checks, not implied by these diagnostics.
-- Hosted LIVE smoke at 05:24 PKT: one Nebius request, model `nvidia/nemotron-3-super-120b-a12b`, semantic review `MEASURED`, no error, `executable:false`. Usage: 1,920 prompt + 533 completion = 2,453 tokens. This is a functional smoke result, not an accuracy benchmark.
+## Validation evidence
+
+- 238 automated tests across 25 files passed locally and in release CI.
+- Formatting, TypeScript, Next.js production build and VSIX packaging passed.
+- Four bundled onboarding integration tests passed under Cursor's Electron Node runtime.
+- Actual Cursor chat: a native Write paused at ApprovalLens's dialog; approving once resumed the chat and produced the expected file content in a disposable project. This was RULES_ONLY, not a live-model UI test.
+- Final local 0.5.0 VSIX installed successfully in Cursor. Already-open editor windows may need reloading to activate updated code.
+- Vercel deployed implementation commit `73fc462`; the extension-first homepage and guide were inspected in the browser.
+- Production anonymous MCP scenarios: safe change → review, protected-field change → block, outside-scope → block. All were RULES_ONLY and non-executable.
+- Production private native evidence route: 27 October 10:42 UTC, genuine `nvidia/nemotron-3-super-120b-a12b` response through Nebius, 1,508 input + 467 output = 1,975 tokens, about 4.6 seconds. The remote client validated the findings. No execution authorization was granted.
+- Earlier hosted sample LIVE test: 2,453 tokens. Functional smoke tests are not benchmark accuracy results.
 
 ## Operational configuration
 
-Vercel Hobby hosts the app. A dedicated Upstash Free Redis store persists model-call reservations with eviction disabled. Redis credentials and model secrets are scoped to Production. Anonymous public requests remain rules-only. The approved LIVE cap is three total admitted model calls, with one consumed by the smoke test. No paid hosting plan was selected. Do not clear the counter to restore quota.
+Vercel Hobby hosts the website and MCP. A dedicated Upstash Free Redis store preserves aggregate inference reservations. Production secrets hold the Nebius key, pinned model, pilot bearer credential, Redis credentials and three-call cap. No secret is bundled in the extension or committed to source.
 
-Private judge configuration is retained only in ignored, owner-readable local files. Do not commit it or put the judge bearer token into the public submission text. Supply it through the competition's private judge instructions if supported.
+Two of the three approved model-call reservations have been used by these tests. One remains unless another authorized caller uses it. Do not clear the counter or raise the limit silently. Public extension installation does not provide unlimited model calls; broad access needs individual authentication and quotas.
 
-## Remaining external / submission work
+## Outstanding work beyond this beta
 
-- Open VSX namespace verification is awaiting maintainers. The extension remains downloadable with an unverified-publisher notice.
-- Switch to OIDC trusted publishing after namespace ownership is granted; this needs a reviewed registration bound to this repo/workflow/environment.
-- Record the final three-minute video, recheck current hackathon requirements, and submit. These were not performed as part of hosting setup.
-- Decide a judge-testing budget before increasing the three-call smoke limit. Two slots remain unless another authorized caller uses them.
-- The production dependency audit is clean; the development publishing toolchain has a documented upstream Azure MSAL advisory in SECURITY.md.
+- Confirm public Open VSX propagation independently from the successful upload.
+- Optional OIDC migration now that namespace ownership is verified.
+- Independent benchmark labeling and a larger judge-testing budget.
+- Windows, remote/multi-root workspaces and broader verified native adapters.
+- Final competition video and submission.
 
-## 0.5.0 extension-first validation
-
-The bundled runtime and automatic workspace setup passed local tests. In an actual disposable Cursor chat, a native Write paused at ApprovalLens's dialog; approving once resumed the chat and produced the expected file content. This was RULES_ONLY and does not imply a live-model UI test. Bundled integration tests also passed under Cursor's Electron Node runtime.
-
-The 0.5.0 production rollout is pending final deployment and registry verification. The earlier production facts above describe 0.4.1 until updated. The website, README, setup, architecture, contributor guide and delivery plan now describe extension-first onboarding.
+The production dependency audit was clean at the previous release; the development publishing toolchain advisory is documented in SECURITY.md. No new benchmark accuracy or universal interception claim is made.

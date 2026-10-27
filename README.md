@@ -6,7 +6,7 @@ A Cursor extension that checks supported agent file operations against developer
 
 ## Start in Cursor
 
-1. Install ApprovalLens. Open one trusted local project on macOS or Linux.
+1. Install ApprovalLens **0.5.0 or newer**. If the registry still shows an older version, install the 0.5.0 VSIX from GitHub Releases. Open one trusted local project on macOS or Linux.
 2. Run **ApprovalLens: Enable for this workspace** and confirm. The extension bundles the companion and installs project hooks, an editable rules file, and the public MCP configuration. No separate Node installation, clone, or terminal service is required.
 3. Edit `.approvallens/rules.json`, then run **ApprovalLens: Apply rules**. The starter permits only reading `package.json`. Exact path grants are intentional; unsupported operations are denied.
 4. Use a supported native Read, whole-file Write, or Delete. Ordinary permitted reads pass locally; eligible mutations wait for your decision. Activity is grouped by chat.

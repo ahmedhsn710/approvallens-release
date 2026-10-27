@@ -13,10 +13,10 @@
 
 ## Release acceptance
 
-- [ ] Final formatting, types, tests, site build and VSIX packaging pass for the release commit.
-- [ ] New hosted evidence route checked against production with a bounded live call.
+- [x] Final formatting, types, tests, site build and VSIX packaging pass for the release commit.
+- [x] New hosted evidence route checked against production with a bounded live call.
 - [ ] Updated production site and registry version independently verified.
-- [ ] Final artifact installed and setup/disable behavior checked.
+- [x] Final artifact installed; bundled setup/disable tests passed.
 
 Use release status as the evidence ledger; do not equate implementation with production verification.
 
