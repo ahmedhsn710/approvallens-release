@@ -4,3 +4,5 @@ node_modules
 artifacts
 package-lock.json
 fixtures/*.jsonl
+
+packages/extension/dist/

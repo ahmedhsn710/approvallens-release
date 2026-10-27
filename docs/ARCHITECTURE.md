@@ -1,29 +1,41 @@
 # Architecture and trust boundaries
 
-## Dependency direction
+## Extension-first runtime
 
-`extension → local companion → MCP review service → core`
+The extension owns onboarding and user interaction. `workspace.cjs` merges project hooks and MCP configuration without overwriting unrelated entries. It creates an editable policy proposal and stores the explicitly applied snapshot outside the workspace. `onboarding.cjs` starts bundled JavaScript using Cursor's Electron runtime and keeps credentials in SecretStorage.
 
-`hosted MCP route → MCP review service → core`
+The hook sends events through a private local Unix socket. `extension-daemon.ts` persists bounded activity in JSON, avoiding native database ABI dependencies. The shared `controller.ts` maps supported tools, checks exact grants, observes file state, routes eligible reviews, and waits for approval. Pending decisions do not survive a restart. The companion stops when the extension closes its process pipe.
 
-`core → Nebius (only after eligible review and spending admission)`
+## Review sequence
 
-The extension renders records and submits a human decision over a local Unix socket. It does not classify safety, manage API keys or override policy. The shared review service binds the developer intent, policy, action and evidence into stable hashes. Results carry evidence limitations and explicitly deny execution authority over MCP.
+1. Normalize the hook event and bind it to the workspace and chat.
+2. Reject unsupported operations, ungranted paths, protected configuration changes, and hard constraint failures.
+3. Collect supported local evidence. Missing evidence is not a safe result.
+4. Pass ordinary permitted reads locally. Hold eligible sensitive operations. In LIVE mode call the remote reviewer; in RULES_ONLY show that no model ran.
+5. Validate structured model findings against the local analysis. A server response never supplies execution authority.
+6. Present the findings in Cursor. Approval is specific to the pending request; dismissal, expiry, failure or rejection denies it.
+7. Recheck relevant file state before returning permission. Record later host outcome separately from approval.
 
-## Native path
+## Hosted boundary
 
-`cursor-hook.mjs` forwards hook payloads to the local daemon. The controller normalizes supported tools, obtains configured local evidence and runs deterministic checks. The developer-owned configuration and SQLite state live outside the inspected workspace. Supported eligible file mutations can wait up to 100 seconds for the extension's review action; the hook timeout is configured to 120 seconds. Rejection, timeout, disconnect, stale file state or invalid model output prevents permission. Historical observations are bounded and are not execution receipts.
+`packages/mcp/src/remote-review.ts` is an MCP client used by the companion. It pins the production endpoint, removes raw write bodies, bounds the request, and calls authenticated `approvallens_review_evidence`. This is distinct from the public MCP entry added for sample discovery.
 
-The daemon uses local state and Unix sockets, so it must not be deployed to a serverless function. The extension is a local UI, not an HTTP MCP client or cloud enforcement agent.
+`apps/site/app/api/mcp/route.ts` authenticates private discovery/calls, checks request shape, reserves durable quota and calls NVIDIA Nemotron through Nebius. Evidence is explicitly client-observed: Vercel cannot independently inspect local files. The result has `executable: false`. The local pipeline validates the returned findings again.
 
-## Hosted path
+The public sample instead owns synthetic baselines on the server. It demonstrates the engine without installation but does not intercept tools or mutate files. Agent-initiated MCP calls can themselves be unsupported by the restrictive native guard; public sample access is not a bypass around native policy.
 
-`apps/site/app/api/mcp/route.ts` creates a stateless Streamable HTTP server per request. There is no in-memory session required between invocations. GET/SSE is not offered. The server exposes discovery samples and advisory review only. A server-owned settings fixture establishes the baseline; caller-provided grants and policy are rejected.
+## Configuration and storage
 
-The public mode is rules-only. A server-side judge bearer credential can request LIVE review. Deterministic denial and incomplete evidence skip the model. Atomic Upstash Redis admission reserves a call before inference, across function instances. Reservations are never refunded after ambiguous failures. The limit is monotonic, capped at 100 by configuration, and defaults to zero. Recreating or clearing the store resets accounting and must not be used as routine recovery.
+- Workspace: `.approvallens/rules.json`, `.cursor/hooks.json`, `.cursor/mcp.json`.
+- User state: `~/.approvallens/<workspace-hash>/` with applied configuration, activity, socket and setup ownership/backups.
+- Editor SecretStorage: pilot bearer credential, never committed in MCP headers.
+- Production secrets: Nebius key, pinned model, judge credential, Redis REST credentials and call limit.
+- Redis: monotonic reservation counter retained across deployments; reconnection never resets it.
 
-The only supported hosted model is `nvidia/nemotron-3-super-120b-a12b`. The Nebius adapter limits output tokens and validates structured responses. Raw write bodies are omitted; configured synthetic field changes and explanations can be transmitted. Hosted errors reveal no key or provider payload.
+## Maintaining one source of logic
 
-## Updating behavior safely
+Change policy/analysis semantics in shared packages, then exercise them through both transports. Do not duplicate policy decisions in sidebar rendering or the website. The extension consumes controller findings; the server uses shared reviewers. `scripts/build-extension.mjs` bundles this source into the distributable package. Rebuild and release the extension when bundled shared code changes; a Vercel deployment alone cannot update installed local enforcement.
 
-Change classification and evidence in `packages/core`, transport-independent policy handling in `packages/mcp`, native waiting/state logic in `packages/companion`, and presentation in `packages/extension`. Add a regression covering the observed failure and keep `executionAuthorized:false` on MCP results. Run typecheck, tests, build and VSIX packaging before release. Do not silently turn unsupported actions into permitted ones.
+## Limits
+
+Supported native mappings are Read/whole-file Write/Delete. Search coverage depends on host events; unsupported delivered calls fail closed. No OS sandbox, universal interception, per-user hosted quotas, automatic signup or Windows support is claimed. Active policy is explicit developer intent, not an assumed complete transcript of the chat.

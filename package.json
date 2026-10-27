@@ -1,6 +1,6 @@
 {
   "name": "approvallens-release",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -22,7 +22,8 @@
     "mcp:stdio": "node --import tsx packages/mcp/src/stdio.ts",
     "extension:package": "node scripts/package-extension.mjs",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "pretest": "node scripts/build-extension.mjs"
   },
   "devDependencies": {
     "@types/better-sqlite3": "9.6.0",
@@ -34,6 +35,7 @@
     "prettier": "3.9.10",
     "tsx": "4.23.15",
     "typescript": "5.9.3",
-    "vitest": "5.0.5"
+    "vitest": "5.0.5",
+    "esbuild": "0.28.2"
   }
 }

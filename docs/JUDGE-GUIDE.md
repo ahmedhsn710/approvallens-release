@@ -1,23 +1,22 @@
 # Judge walkthrough
 
-## Hosted: no local server needed
+## Primary demonstration: native Cursor approval
 
-1. Open the deployment homepage and copy the MCP configuration. Add it to your Streamable HTTP MCP client.
-2. Call `approvallens_examples`. Inspect the developer intent, sample baseline and scenarios. These files are synthetic and hosted; your machine is not being accessed.
-3. Call `approvallens_review` with the `toolCall` and `agentExplanation` from `safe-change`. Inspect preserved-field evidence. Public mode honestly reports `RULES_ONLY` and `NOT_MEASURED`.
-4. Repeat with `protected-change`. The explanation says retries are preserved, but the proposed content changes them. Expect a deterministic block.
-5. Repeat with `outside-scope`. Expect a denial of an ungranted `.env` read; no real secret is read.
+Install [ApprovalLens](https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor) on macOS/Linux. Open a disposable single local folder containing `demo.txt`. Run **ApprovalLens: Enable for this workspace**. Follow [extension setup](EXTENSION-SETUP.md) to grant only reading and writing `demo.txt`, then **Apply rules**.
 
-For configured LIVE testing, use the privately supplied judge bearer token in the MCP client's `Authorization` header. Never publish it. A hard denial still skips inference. Exhausted or unavailable budget returns an error without approval. LIVE availability must be verified on the actual deployment before recording the submission video.
+- **0:00–0:40:** Show the rules and applied scope. Explain that repository edits do not silently change the active policy.
+- **0:40–1:30:** Ask the Cursor agent to use native whole-file Write to replace `demo.txt`. Show the waiting request, chat grouping, observed evidence and review mode. Reject it and verify the file is unchanged.
+- **1:30–2:20:** Repeat the permitted write, inspect findings and approve once. Verify Cursor continues and the file changes. A supported attempt to write an ungranted path should be denied locally.
+- **2:20–3:00:** Explain remote review and boundaries. With a privately supplied pilot token and remaining quota, connect hosted review before the run to display genuine Nemotron findings. Otherwise show RULES_ONLY honestly; do not claim a model ran.
 
-## Native: demonstrate enforcement
+The pilot uses a shared bounded quota. Contact the project team for a credential; no secret is published in this repository. The installed companion is bundled—judges do not need to clone source or start a terminal service.
 
-Follow [NATIVE-GUARD.md](NATIVE-GUARD.md), then use the sample prompts in the sidebar. A safe whole-file write waits for your explicit review; changing a protected field is denied. Verify the actual sample file afterwards. Do not infer successful execution solely from a review record.
+## Secondary demonstration: hosted sample
 
-## Suggested three-minute recording
+For a no-install look at the review engine, connect an MCP client to `https://approvallens-release.vercel.app/api/mcp`. Call `approvallens_examples`, then review the safe-change, protected-change and outside-scope proposals using `approvallens_review`. The server owns synthetic baselines. It never touches local files or authorizes execution. Use a separate client/project if the restrictive native guard denies an agent-initiated MCP call.
 
-- 0:00–0:25: show the task and deceptive explanation versus actual protected-field change.
-- 0:25–1:05: show hosted MCP policy, baseline provenance and deterministic denial.
-- 1:05–1:45: show an eligible LIVE review if enabled, including validated evidence and model identity.
-- 1:45–2:35: show native Cursor waiting, explicit human approval of a safe change, and the resulting file.
-- 2:35–3:00: show tests, architecture and known coverage limits. Do not claim benchmark accuracy from synthetic fixtures.
+Anonymous requests are RULES_ONLY. Authenticated eligible calls can invoke Nemotron when quota remains. A hard denial does not need a model call. Browser GET returning 405 is expected; this MCP transport uses POST.
+
+## What to assess
+
+Look for policy failures that cannot be overridden by persuasive text, explicit uncertainty, evidence freshness, the human decision boundary and honest mode reporting. Functional tests are reproducibility evidence, not a benchmark accuracy result. Built-in search and unsupported host paths are not universally intercepted. See [release status](RELEASE-STATUS.md) for verified deployment evidence.

@@ -1,57 +1,33 @@
-# Release plan — 26–30 October 2026
+# Delivery plan — extension-first beta
 
-## Goal
+## Implemented
 
-Ship one professional source repository with shared logic, a hosted judge MCP, a native Cursor guard/extension and an honest product guide. Preserve original development history and benchmark research separately. Avoid reintroducing the old web dashboard, execution worker or general agent orchestrator.
+- Shared deterministic policy/evidence engine and structured model review validation.
+- Native controller with chat-grouped activity, human decisions and state rechecks.
+- Bundled extension runtime, project enable/disable, editable rules and explicit apply.
+- Automatic hook/MCP configuration merging and external active-policy snapshot.
+- SecretStorage pilot credential and authenticated remote evidence review.
+- Public hosted synthetic walkthrough, Vercel deployment and Open VSX release automation.
+- Automated setup, transport, policy and lifecycle regression tests.
+- Actual Cursor native Write held at an approval dialog and resumed after approval in a disposable project.
 
-## Phase 1 — clean extraction and validation
+## Release acceptance
 
-- [x] Extract core, MCP service, companion, extension and selected regression tests from source commit e25b04a.
-- [x] Add stateless HTTP MCP and immutable judge fixtures.
-- [x] Add landing page, judge guide and privacy boundaries.
-- [x] Validate typecheck, production build and core tests.
-- [x] Finish hosted transport regressions, extension packaging and fresh-checkout smoke tests.
-- [x] Create the public release repository after secret/content audit.
+- [ ] Final formatting, types, tests, site build and VSIX packaging pass for the release commit.
+- [ ] New hosted evidence route checked against production with a bounded live call.
+- [ ] Updated production site and registry version independently verified.
+- [ ] Final artifact installed and setup/disable behavior checked.
 
-Exit: runnable clean checkout, reproducible package, truthful docs, no inherited credentials/state.
+Use release status as the evidence ledger; do not equate implementation with production verification.
 
-## Phase 2 — hosting and CI/CD
+## Next priorities
 
-- [x] Connect GitHub repository to Vercel; root directory `apps/site`.
-- [x] Verify public homepage, guide and MCP initialization/tool calls on production URL.
-- [x] Provision a free durable Redis store for optional live spending admission.
-- [x] Configure server-side Nebius credentials, exact model and private judge token.
-- [x] Test one eligible LIVE request within the approved spending cap; record mode and outcome without sensitive payloads.
-- [x] Enable automated checks and manual versioned extension release artifacts.
+1. Broader tool coverage: capture documented real host payloads, add operation-specific adapters and regression fixtures. Never turn unknown tools into automatic allows to improve usability.
+2. Public AI onboarding: individual identity and revocation, per-user rate limits/quotas, clear data disclosure and budget management. Current shared pilot token is not a public billing architecture.
+3. Evaluation: separately labeled legitimate and deceptive requests, held-out splits, false-positive rates, abstention, latency and cost. Report sample provenance and avoid headline accuracy before independent labeling.
+4. Platform support: Windows transport and quoting, remote extension hosts, multi-root ownership, upgrade and uninstall recovery.
+5. UX: clearer missing-evidence guidance and measured approval fatigue; retain explicit human control.
 
-Exit: judges can use remote MCP without starting a local server. Never label rules-only responses as live.
+## Scope boundaries
 
-## Phase 3 — extension publication
-
-- [x] Complete Eclipse account and Open VSX publisher agreement (account-owner step).
-- [ ] Create/verify namespace matching publisher `ahmedhsn710`.
-- [x] Configure publishing token as GitHub environment secret; never commit it.
-- [ ] Publish tested VSIX and verify listing/download (done); verify installed package in an isolated Cursor profile.
-- [ ] Check clean install, safe approval, protected-field denial and cleanup.
-
-Fallback: a tested public GitHub VSIX release is usable while registry onboarding is pending. It is not a marketplace listing.
-
-## Phase 4 — submission freeze
-
-- [ ] Replay judge walkthrough on final deployed commit.
-- [ ] Record public video at most three minutes and complete current hackathon submission requirements after checking official rules.
-- [ ] Document measured benchmark results with dataset/split/version provenance, separately from synthetic smoke tests.
-- [ ] Verify public repository/license, working demo URL and live Nebius integration.
-- [ ] Freeze scope; only fix defects affecting installation, approval correctness or judge access.
-
-## Ownership and update discipline
-
-Developer A: core evidence/policy, native guard, model-output validation, regression cases.
-Developer B: hosted transport, UI/docs, deployment, release automation.
-Both: contract changes, spending gates and final native approval verification.
-
-Change core once, test through both transports, then release adapters together. Keep protocol/result versions explicit. Never introduce broad shell support, arbitrary remote repository execution, automatic approvals or unbounded live inference to improve the demo.
-
-## Release evidence
-
-Record final commit, CI result, deployed URL, test counts, VSIX checksum and explicit live/rules-only status in `docs/RELEASE-STATUS.md`. Mark account/provider blockers accurately; unchecked tasks above are not claims of completion.
+No universal interception, arbitrary shell execution approval, complete chat-intent reconstruction or OS sandbox claim. No small-model routing classifier exists. Keep the hosted walkthrough secondary to installed native protection. Legacy manual service commands remain for developers and must not be presented as normal installation steps.

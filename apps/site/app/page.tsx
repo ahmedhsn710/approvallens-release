@@ -99,8 +99,14 @@ export default function Home() {
                 ApprovalLens checks what it’s actually asking.
               </p>
               <div className="actions">
-                <button className="primary" onClick={connect}>
-                  {copied ? "Configuration copied ✓" : "Connect the MCP"}{" "}
+                <a
+                  className="primary"
+                  href="https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor"
+                >
+                  Install the extension ↗
+                </a>
+                <button className="secondary" onClick={connect}>
+                  {copied ? "Configuration copied ✓" : "Copy sample MCP config"}{" "}
                   <span>↗</span>
                 </button>
                 <a className="secondary" href="/guide">
@@ -108,7 +114,8 @@ export default function Home() {
                 </a>
               </div>
               <p className="micro">
-                Hosted MCP. No local server for the judge walkthrough.
+                Install the extension. Enable your workspace. Review before
+                execution.
               </p>
             </div>
             <aside className="hero-note">
@@ -261,14 +268,14 @@ export default function Home() {
           <div className="section-kicker">03 / MEET YOUR WORKFLOW</div>
           <div className="paths-heading">
             <h2>
-              One review engine.
+              Install. Enable.
               <br />
-              Two ways in.
+              Decide with evidence.
             </h2>
             <p>
-              Start with the hosted endpoint.
+              Start with the Cursor extension.
               <br />
-              Add the native guard when you need enforcement.
+              Try the hosted sample without installing.
             </p>
           </div>
           <div className="path-grid">
@@ -293,8 +300,8 @@ export default function Home() {
               <h3>Native approval guard</h3>
               <p>
                 Group activity by chat, inspect policy evidence, and decide on a
-                waiting Read, Write or Delete call. Requires local hooks and the
-                companion.
+                waiting Read, Write or Delete call. The extension installs its
+                hooks and bundled companion for you.
               </p>
               <a href={repo + "/releases"}>
                 Get the extension & source <span>↗</span>
@@ -339,7 +346,7 @@ export default function Home() {
           <a className="primary" href="/guide">
             Open the judge guide <span>↗</span>
           </a>
-          <p>Three proposals. One protected value. An auditable result.</p>
+          <p>One workspace. Explicit rules. Decisions you can inspect.</p>
         </section>
       </main>
       <footer>

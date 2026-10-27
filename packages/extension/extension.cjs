@@ -16,6 +16,7 @@ const labels = {
   expired: "Expired",
 };
 function activate(context) {
+  const managed = require("./onboarding.cjs").register(vscode, context);
   const folder = vscode.workspace.workspaceFolders?.[0];
   let prompts = [];
   if (folder) {
@@ -47,13 +48,12 @@ function activate(context) {
   badge.show();
   function rpc(method, id) {
     return new Promise((resolve, reject) => {
-      const path = vscode.workspace
-        .getConfiguration("approvallens")
-        .get("socketPath");
+      const path =
+        managed.socketPath() ||
+        vscode.workspace.getConfiguration("approvallens").inspect("socketPath")
+          ?.workspaceValue;
       if (!path)
-        return reject(
-          Error("Configure ApprovalLens Socket Path in user settings."),
-        );
+        return reject(Error("Run ApprovalLens: Enable for this workspace."));
       const client = createConnection(path);
       let data = "";
       client.setTimeout(3000, () => client.destroy(Error("Service timeout")));

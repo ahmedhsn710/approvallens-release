@@ -1,54 +1,55 @@
 # ApprovalLens — proof before permission
 
-An independent review layer for agent tool requests. ApprovalLens compares the **actual proposed action** with developer-owned policy and available evidence before a human approves it.
+A Cursor extension that checks supported agent file operations against developer-owned rules, gathers evidence, and holds sensitive operations for human approval. NVIDIA Nemotron through Nebius Token Factory provides an optional hosted second opinion. A model cannot override policy or authorize execution.
 
-**Release preview · MIT · Node 24 · MCP + Cursor**
+[Install from Open VSX](https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor) · [Website](https://approvallens-release.vercel.app) · [Setup guide](docs/EXTENSION-SETUP.md) · [Judge walkthrough](docs/JUDGE-GUIDE.md) · [Release downloads](https://github.com/ahmedhsn710/approvallens-release/releases)
 
-## Try it
+## Start in Cursor
 
-[Live product page](https://approvallens-release.vercel.app) · [Judge guide](https://approvallens-release.vercel.app/guide) · [Download extension](https://github.com/ahmedhsn710/approvallens-release/releases/latest)
+1. Install ApprovalLens. Open one trusted local project on macOS or Linux.
+2. Run **ApprovalLens: Enable for this workspace** and confirm. The extension bundles the companion and installs project hooks, an editable rules file, and the public MCP configuration. No separate Node installation, clone, or terminal service is required.
+3. Edit `.approvallens/rules.json`, then run **ApprovalLens: Apply rules**. The starter permits only reading `package.json`. Exact path grants are intentional; unsupported operations are denied.
+4. Use a supported native Read, whole-file Write, or Delete. Ordinary permitted reads pass locally; eligible mutations wait for your decision. Activity is grouped by chat.
+5. For Nemotron findings, run **ApprovalLens: Connect hosted review** with a privately supplied pilot credential. The token goes into editor SecretStorage. Anonymous installs work in rules-only mode; the pilot has a shared bounded inference quota.
 
-MCP endpoint: `https://approvallens-release.vercel.app/api/mcp`
+Cursor may ask you to enable the configured MCP or start a new chat. Disable the workspace integration before uninstalling the extension so owned hooks are removed.
 
-The hosted application provides a product page, judge guide and Streamable HTTP MCP endpoint at `/api/mcp`. It deliberately has no web execution dashboard. See [deployment instructions](docs/DEPLOYMENT.md) and [the judge walkthrough](docs/JUDGE-GUIDE.md).
+## How it works
 
-The public MCP uses an immutable synthetic fixture. It does not read your repository. Public requests run deterministic checks in `RULES_ONLY` mode. Configured judge credentials enable bounded Nebius review; missing configuration or exhausted budget fails closed.
-
-For real native Cursor interception, install the **local guard and extension together**:
-
-```sh
-npm ci
-npm run demo:ready -- /tmp/al-settings-demo
+```text
+Cursor preToolUse → bundled local companion → applied policy + observed file evidence
+                                              ↓ eligible LIVE review
+                                      hosted MCP → Nebius Nemotron
+                                              ↓ validated findings
+                     human decision ← extension dialog
+                            ↓ recheck file state
+                     allow or deny the waiting native call
 ```
 
-This creates a new disposable sample, installs the extension, starts the local checker and opens Cursor. It never approves an action. macOS/Linux and Node 24 are required; the destination must not exist. See [native setup and removal](docs/NATIVE-GUARD.md).
+Hard policy violations and incomplete evidence stop locally. Rules-only reviews explicitly say no model ran. The hosted server returns advisory findings, never an execution grant. The independent public MCP sample uses synthetic files and cannot inspect your workspace.
 
-## What happens to a request
+## Boundaries
 
-1. A transport receives the proposed tool call and explanation.
-2. The shared engine checks operation/path grants, evidence coverage and protected JSON fields.
-3. Hard denials and incomplete evidence skip model inference. Eligible configured LIVE requests use **NVIDIA Nemotron 3 Super through Nebius Token Factory**, with structured output validated locally.
-4. MCP returns an advisory result. In native mode, eligible mutations wait for an explicit, one-time human decision; the guard rechecks file state before allowing the original call.
+This is a restrictive development beta, not a universal agent firewall. Supported adapters cover Read/whole-file Write/Delete. Shell, patches and other unsupported hook-delivered calls are denied. Built-in search may not deliver compatible hooks and therefore cannot be promised interception or logging. No separate small-model classifier exists: routing is deterministic. Single local folder only; Windows, remote workspaces and multi-root are not supported by bundled onboarding.
 
-A plausible explanation cannot override policy. A model failure is not permission. An MCP recommendation is never execution authorization.
+The applied rules snapshot lives outside the repository. Changes to the editable file require explicit application. Supported agent writes to ApprovalLens and Cursor security configuration are blocked. This is not an OS sandbox or protection against another process running as your user.
 
 ## Repository map
 
-| Location             | Responsibility                                                                                      |
-| -------------------- | --------------------------------------------------------------------------------------------------- |
-| `packages/core`      | Tool contracts, effect analysis, evidence, deterministic decisions, model prompt and Nebius adapter |
-| `packages/mcp`       | Transport-independent review service, policy and identity, local MCP transport                      |
-| `packages/companion` | Cursor hooks service, local history, durable local budget, waiting approvals and diagnostics        |
-| `packages/extension` | Cursor sidebar, chat grouping, review dialogs and status presentation                               |
-| `apps/site`          | Landing page, judge/privacy guides and hosted MCP route                                             |
-| `scripts`            | Deliberate project setup and sample launchers                                                       |
-| `tests`              | Core, guard, MCP, transport and spending-boundary regression tests                                  |
-| `fixtures`           | Synthetic development cases; not a held-out benchmark                                               |
-| `docs`               | Architecture, deployment, security boundaries and release plan                                      |
+| Location               | Responsibility                                                |
+| ---------------------- | ------------------------------------------------------------- |
+| `packages/core`        | Shared analysis, evidence and review validation               |
+| `packages/mcp`         | Policy, reviewer, MCP transports and hosted-review client     |
+| `packages/companion`   | Native hook controller, local decisions and persistence       |
+| `packages/extension`   | Cursor commands, bundled setup, chat activity and approval UI |
+| `apps/site`            | Product site, guide and Vercel MCP route                      |
+| `tests`                | Policy, transport, lifecycle and integration regressions      |
+| `scripts`              | Build, package, development services and demonstrations       |
+| `examples`, `fixtures` | Synthetic policies and reproducible scenarios                 |
 
-No policy logic belongs in the extension or landing page. Changes to the shared engine reach both transports through imports, with contract tests protecting the boundary.
+## Develop
 
-## Development
+Node 24+ is required for repository development, not for installed extension users.
 
 ```sh
 npm ci
@@ -56,21 +57,10 @@ npm run typecheck
 npm test
 npm run build
 npm run extension:package
-npm run dev
 ```
 
-Open the local URL printed by Next.js. Do not put keys in the browser, extension settings, source control, or client MCP configuration. Optional server variables are documented in `.env.example`.
+The package command bundles the companion, policy parser and hook. Install the generated VSIX in a disposable project to verify actual editor behavior. See [contributor guide](CONTRIBUTING.md) for ownership and validation, [architecture](docs/ARCHITECTURE.md) for trust boundaries, [deployment](docs/DEPLOYMENT.md) for secrets and publishing, and [plan](PLAN.md) for outstanding work.
 
-## Limits, stated plainly
+## Evidence and license
 
-- Hosted MCP is advisory and uses server-owned sample evidence. It cannot pause native Cursor tools.
-- Native protection covers supported hook-delivered operations only. Search, partial edits, manual edits, Tab, and parallel activity are not comprehensively covered. Unsupported delivered operations are logged and denied.
-- The local checker is not an operating-system sandbox. Same-user processes and writable project hooks remain in the trust boundary.
-- Rules-only output means semantic review was **not measured**. We make no new benchmark accuracy claim in this release.
-- The local stdio launcher is rules-only. LIVE is available through the configured native companion or hosted judge service.
-
-## Documentation
-
-[Architecture](docs/ARCHITECTURE.md) · [Judge guide](docs/JUDGE-GUIDE.md) · [Native setup](docs/NATIVE-GUARD.md) · [Deployment and publishing](docs/DEPLOYMENT.md) · [Release plan](PLAN.md) · [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Provenance](docs/PROVENANCE.md)
-
-The original development history and benchmark work remain in their existing repositories. This is a focused release extraction, not a claim that all the work was newly implemented here.
+Automated functional tests do not establish benchmark accuracy. Verification status and remaining external dependencies are recorded in [release status](docs/RELEASE-STATUS.md). Original research provenance is in [provenance](docs/PROVENANCE.md). MIT licensed; see [LICENSE](LICENSE).

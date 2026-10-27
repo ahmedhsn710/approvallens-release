@@ -1,4 +1,4 @@
-# Verified release status — 26 October 2026
+# Verified release status — 27 October 2026
 
 ## Public surfaces
 
@@ -14,7 +14,7 @@ The registry listing and download are public. The publisher is still marked unve
 
 ## Validation performed
 
-- 229 automated tests passing across 23 files, including shared core, native guard, stdio MCP and hosted transport.
+- 238 automated tests passing across 25 files, including shared core, native guard, stdio MCP and hosted transport.
 - TypeScript check, formatting check, Next.js production build and isolated VSIX packaging pass.
 - GitHub checks and the v0.4.1 release workflow succeeded, including Open VSX upload.
 - The CI-produced v0.4.1 VSIX installed successfully in an isolated Cursor profile; Cursor listed `ahmedhsn710.approvallens-cursor@0.4.1`. This installation check does not claim a live chat interception test.
@@ -36,3 +36,9 @@ Private judge configuration is retained only in ignored, owner-readable local fi
 - Record the final three-minute video, recheck current hackathon requirements, and submit. These were not performed as part of hosting setup.
 - Decide a judge-testing budget before increasing the three-call smoke limit. Two slots remain unless another authorized caller uses them.
 - The production dependency audit is clean; the development publishing toolchain has a documented upstream Azure MSAL advisory in SECURITY.md.
+
+## 0.5.0 extension-first validation
+
+The bundled runtime and automatic workspace setup passed local tests. In an actual disposable Cursor chat, a native Write paused at ApprovalLens's dialog; approving once resumed the chat and produced the expected file content. This was RULES_ONLY and does not imply a live-model UI test. Bundled integration tests also passed under Cursor's Electron Node runtime.
+
+The 0.5.0 production rollout is pending final deployment and registry verification. The earlier production facts above describe 0.4.1 until updated. The website, README, setup, architecture, contributor guide and delivery plan now describe extension-first onboarding.

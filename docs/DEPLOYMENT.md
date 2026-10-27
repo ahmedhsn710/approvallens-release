@@ -40,3 +40,9 @@ GitHub release VSIX downloads are the immediate distribution fallback. A downloa
 ## Current deployment
 
 See [RELEASE-STATUS.md](RELEASE-STATUS.md) for verified URLs, live test evidence and external namespace-review status. The publishing token is configured in the `marketplace` environment. Open VSX trusted publishing requires namespace ownership and an active extension; after ownership verification, register this repository and the publishing workflow with the `marketplace` environment, then use `ovsx publish --trusted-publishing` with `id-token: write`. Do not remove the existing token until the replacement path has been tested.
+
+## Extension-first remote review (0.5.0)
+
+The bundled companion calls authenticated `approvallens_review_evidence`. It uses the same pilot bearer secret and durable quota as the existing LIVE sample. Authenticated discovery exposes this private tool; public discovery does not. Evidence is client-observed, raw write bodies are omitted, and the result is always advisory. Installed users enter the pilot token through Connect hosted review; never distribute the Nebius key to clients.
+
+Deploy the server before directing users to connect the new extension. A successful connection checks authenticated tool discovery without spending a model call. Server deployment and extension release are independent: changes to bundled local logic require publishing a new VSIX. Public distribution of the extension does not imply unlimited public model access.

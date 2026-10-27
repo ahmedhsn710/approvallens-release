@@ -18,12 +18,13 @@ export default function Privacy() {
         <section>
           <h2>Hosted MCP</h2>
           <p>
-            Requests reach Vercel. Use synthetic test inputs only. Do not submit
-            credentials, personal data or confidential code. Public rules-only
-            requests do not call Nebius. Live review sends the configured task,
-            agent explanation and policy-disclosed effects, including configured
-            JSON field changes, to Nebius. Raw write bodies are omitted from the
-            model payload.
+            Requests reach Vercel. Public samples use synthetic inputs. Private
+            pilot review accepts explicitly disclosed client-observed evidence.
+            Do not submit credentials, personal data or confidential code.
+            Public rules-only requests do not call Nebius. Live review sends the
+            configured task, agent explanation and policy-disclosed effects,
+            including configured JSON field changes, to Nebius. Raw write bodies
+            are omitted from the model payload.
           </p>
           <p>
             The application does not intentionally log raw requests.
@@ -37,8 +38,9 @@ export default function Privacy() {
           <p>
             The sidebar talks to a local companion. Local activity and policy
             evidence may be retained on your device. Hooks must be enabled in
-            the inspected workspace. The extension alone cannot intercept native
-            calls; remote MCP alone cannot enforce native Cursor permissions.
+            the inspected workspace. Workspace enablement installs the bundled
+            hooks and companion. Remote MCP alone cannot enforce native Cursor
+            permissions. The access token is stored in editor SecretStorage.
           </p>
         </section>
         <section>

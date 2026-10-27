@@ -6,110 +6,141 @@ export default function Guide() {
         <Link className="brand" href="/">
           ◈ ApprovalLens
         </Link>
-        <Link
+        <a
           className="nav-cta"
-          href="https://github.com/ahmedhsn710/approvallens-release"
+          href="https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor"
         >
-          View source ↗
-        </Link>
+          Install extension ↗
+        </a>
       </header>
       <main className="guide">
-        <div className="section-kicker">
-          THE JUDGE WALKTHROUGH / ABOUT 3 MINUTES
-        </div>
+        <div className="section-kicker">CURSOR SETUP / JUDGE WALKTHROUGH</div>
         <h1>
-          Less setup.
+          One install.
           <br />
-          <em>More evidence.</em>
+          <em>Your decisions.</em>
         </h1>
         <p className="lede">
-          Use the hosted MCP from your client. No local server, repository
-          clone, or extension is needed for this walkthrough.
+          Enable a project, apply your rules, and review supported agent actions
+          before they run. The local companion is included.
         </p>
         <section>
-          <h2>1. Connect the endpoint</h2>
+          <h2>1. Install and enable</h2>
           <p>
-            On the homepage, click <b>Connect the MCP</b> to copy the
-            configuration with this deployment’s URL. In Cursor, add it under
-            MCP settings. Other Streamable HTTP MCP clients can use the same
-            endpoint.
+            Install ApprovalLens from Open VSX in Cursor. Open one trusted local
+            folder on macOS or Linux, then run{" "}
+            <b>ApprovalLens: Enable for this workspace</b>. Confirm the setup.
+            No repository clone, Node installation or terminal service is
+            required.
           </p>
-          <pre>
-            {
-              '{\n  "mcpServers": {\n    "approvallens": {\n      "url": "https://YOUR-DEPLOYMENT/api/mcp"\n    }\n  }\n}'
-            }
-          </pre>
           <p>
-            The public endpoint runs real deterministic checks in{" "}
-            <b>RULES_ONLY</b> mode. It does not pretend a model ran. For LIVE
-            review, add the separately supplied judge credential as an
-            Authorization bearer header; the server must have Nebius and a
-            durable budget configured.
+            The extension adds project hooks, a public MCP entry and{" "}
+            <code>.approvallens/rules.json</code>. Cursor may require trusting
+            the MCP entry or starting a new chat.
           </p>
         </section>
         <section>
-          <h2>2. Discover the sample</h2>
-          <pre>
-            Call approvallens_examples. Show the policy, baseline and three
-            scenarios. Do not execute any proposed operation.
-          </pre>
+          <h2>2. Set a narrow scope</h2>
           <p>
-            The server owns the synthetic settings.json baseline: strict=false,
-            retries=1. Its policy permits enabling strict mode while preserving
-            retries. These are sample files, not files on your computer.
+            Start in a disposable folder with a file named <code>demo.txt</code>
+            . Edit your rules using the example below, then run{" "}
+            <b>ApprovalLens: Apply rules</b> and confirm. Editing alone does not
+            change the active policy.
+          </p>
+          <pre>
+            {JSON.stringify(
+              {
+                version: 1,
+                taskId: "demo",
+                developerIntent: "Update demo.txt. Preserve other files.",
+                grants: [
+                  { operation: "read_file", path: "demo.txt" },
+                  { operation: "write_file", path: "demo.txt" },
+                ],
+              },
+              null,
+              2,
+            )}
+          </pre>
+        </section>
+        <section>
+          <h2>3. Watch a native call wait</h2>
+          <p>
+            Ask Cursor to use a native whole-file Write to replace demo.txt with
+            a short sentence. Inspect the ApprovalLens dialog and reject once.
+            Confirm the file is unchanged. Repeat and approve once: Cursor
+            should continue and write the file. The sidebar groups activity by
+            chat.
+          </p>
+          <p>
+            Hard policy violations stop locally. Ordinary granted reads can pass
+            locally. Eligible sensitive operations require a decision; closing
+            the dialog rejects them.
           </p>
         </section>
         <section>
-          <h2>3. Review three proposals</h2>
+          <h2>4. Connect live findings</h2>
+          <p>
+            Run <b>ApprovalLens: Connect hosted review</b> and enter a privately
+            supplied pilot credential after reading the data disclosure. It is
+            stored in editor SecretStorage, not repository configuration.
+            Eligible evidence goes through hosted MCP to NVIDIA Nemotron on
+            Nebius. The model provides findings; your local guard retains
+            authority.
+          </p>
+          <p>
+            Without a credential the extension clearly displays RULES_ONLY. The
+            current pilot has a limited shared quota, not unlimited public
+            inference. Failure or exhausted quota does not silently permit an
+            operation.
+          </p>
+        </section>
+        <section>
+          <h2>A three-minute presentation</h2>
           <ol>
+            <li>First 40 seconds: show the rules and project setup.</li>
             <li>
-              <b>Safe change:</b> call approvallens_review using the safe-change
-              example. Expect complete JSON evidence with retries preserved.
-              Rules-only mode still requires semantic review; it never returns
-              execution authorization.
+              Next 50 seconds: trigger a supported write, inspect findings and
+              reject.
             </li>
             <li>
-              <b>Hidden extra change:</b> use protected-change. Expect a
-              deterministic preserve-retries violation, even though the
-              explanation sounds harmless. No paid model call is needed.
+              Next 50 seconds: repeat, approve and verify the actual file.
             </li>
             <li>
-              <b>Outside scope:</b> use outside-scope. Expect a denial for the
-              ungranted .env path. No real .env file is read.
+              Final 40 seconds: show mode, policy denial and coverage limits.
             </li>
           </ol>
+        </section>
+        <section>
+          <h2>Try the engine without installing</h2>
           <p>
-            Inspect <code>decision</code>, <code>assessment</code>,{" "}
-            <code>analysis</code>, <code>semanticReview</code> and{" "}
-            <code>executable: false</code>. Unknown and failed results are not
-            approval.
+            The homepage’s sample MCP configuration connects to{" "}
+            <code>https://approvallens-release.vercel.app/api/mcp</code>. Call{" "}
+            <code>approvallens_examples</code>, then{" "}
+            <code>approvallens_review</code> with its three scenarios. This
+            secondary walkthrough uses synthetic server-owned files and never
+            intercepts or executes local tools. Use a separate client if a
+            native guard denies an agent-initiated MCP call.
           </p>
         </section>
         <section>
-          <h2>Optional: native Cursor enforcement</h2>
+          <h2>Know the boundaries</h2>
           <p>
-            The extension is a separate local integration. It cannot intercept
-            native tools from a cloud server alone. Download the release and
-            follow the repository’s native setup guide. macOS/Linux and Node 24
-            are required. Supported whole-file operations are held locally;
-            search and partial edits are not comprehensively supported.
+            Native adapters support Read, whole-file Write and Delete. Shell and
+            unsupported delivered calls are denied. Search may bypass host
+            hooks. Windows, remote and multi-root workspaces are not supported.
+            Disable the workspace integration before uninstalling.
           </p>
-          <a
-            className="primary"
-            href="https://github.com/ahmedhsn710/approvallens-release/releases"
-          >
-            Release downloads ↗
+          <p>
+            This is an evidence review beta, not an OS sandbox or universal
+            safety guarantee.
+          </p>
+          <a href="https://github.com/ahmedhsn710/approvallens-release/blob/main/docs/EXTENSION-SETUP.md">
+            Detailed setup and troubleshooting ↗
           </a>
-        </section>
-        <section>
-          <h2>What this proves—and what it doesn’t</h2>
           <p>
-            This is a working policy and evidence review pipeline with a remote
-            MCP transport. It is not a full code audit, runtime sandbox,
-            prompt-injection immunity claim, or benchmark accuracy claim. No
-            action in the hosted judge walkthrough executes code.
+            <Link href="/privacy">Privacy and limitations →</Link>
           </p>
-          <Link href="/privacy">Read privacy and limitations →</Link>
         </section>
       </main>
     </>

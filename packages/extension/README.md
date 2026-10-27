@@ -8,14 +8,11 @@
 
 Install `ahmedhsn710.approvallens-cursor` from the extension registry, or use the VSIX on [GitHub Releases](https://github.com/ahmedhsn710/approvallens-release/releases/latest).
 
-**The extension needs the separate local companion and project hooks. Installing it alone does not intercept tools.** For a disposable demonstration, clone the repository, install Node 24, then run:
+Open one trusted local folder and run **ApprovalLens: Enable for this workspace**. The extension bundles its local companion, adds project hooks and MCP configuration, and creates `.approvallens/rules.json`. No repository clone, npm install or separate Node installation is required. macOS/Linux only.
 
-```sh
-npm ci
-npm run demo:ready -- /tmp/al-settings-demo
-```
+Edit the exact operation/path grants and intent, then run **ApprovalLens: Apply rules**. The starter grants only reading `package.json`. Unsupported hooked tools are denied.
 
-Choose a fresh destination. The launcher creates a sample, starts the local checker and opens Cursor. It does not call a model or approve a write. macOS/Linux only. Open the shield icon and copy one sample prompt at a time.
+Use **ApprovalLens: Connect hosted review** to enter a pilot access token and explicitly enable evidence transmission to Vercel/Nebius. Anonymous installations work in rules-only mode; hosted inference is subject to a limited shared quota, not an unlimited public service. See the [complete setup guide](https://github.com/ahmedhsn710/approvallens-release/blob/main/docs/EXTENSION-SETUP.md).
 
 ## What you see
 
@@ -24,13 +21,13 @@ Choose a fresh destination. The launcher creates a sample, starts the local chec
 - Explicit **Approve once** or **Reject** decisions. Cancellation, disconnect and timeout deny the request.
 - Service identity, rules-only/LIVE status, disclosed JSON fields and live-stop diagnostics.
 
-The service holds supported eligible operations for up to 100 seconds and rechecks the file before allowing the original call. Configure `approvalMode: "wait"` and the generated 120-second hook timeout. The extension's socket setting must point to the matching local service. The generated sample configures this per workspace.
+The service holds supported eligible operations for up to 100 seconds and rechecks the file before allowing the original call. Workspace enablement configures waiting mode and the 120-second hook timeout automatically.
 
 ## Review logic
 
 Deterministic scope and protected-field checks run first. Configured LIVE mode sends eligible requests to NVIDIA Nemotron through Nebius, validates the reply, and presents evidence to the human. Model output cannot override policy or grant execution. Failures and exhausted budgets deny native actions. Rules-only mode explicitly reports `NOT_MEASURED` for semantic review.
 
-No policy logic or API keys belong in the extension. Both MCP and the companion use the same review engine.
+The bundled companion and MCP share the review engine. The extension stores the pilot access token in editor SecretStorage; the Nebius key remains server-side.
 
 ## Coverage and privacy
 
@@ -42,6 +39,6 @@ A model error stops native LIVE review across restarts. Budget reservations rema
 
 ## Troubleshooting and removal
 
-Run `npm run cursor:doctor -- <config-file> <state-directory>` from the source checkout. Verify workspace trust, the service socket and the shield Activity view. For removal, stop the companion and remove only ApprovalLens-owned hook entries before uninstalling the extension; preserve other tools' settings. See the [full guide](https://github.com/ahmedhsn710/approvallens-release/blob/main/docs/NATIVE-GUARD.md).
+Run **ApprovalLens: Check setup**. Use **Disable for this workspace** before uninstalling; it removes only owned hook and MCP entries and stops the companion. Removing the extension first leaves fail-closed hooks which need manual removal. Rules edits become active only after **Apply rules**. The applied policy and local audit records live outside the repository under `~/.approvallens/`.
 
 MIT licensed. Release preview; namespace verification status is shown by Open VSX.

@@ -120,6 +120,14 @@ export function createCursorController(
       /[\x00-\x1f]/.test(rel)
     )
       throw Error("outside_workspace");
+    if (
+      rel === ".approvallens" ||
+      rel.startsWith(".approvallens/") ||
+      rel === ".cursor" ||
+      rel.startsWith(".cursor/") ||
+      rel === ".vscode/settings.json"
+    )
+      throw Error("ApprovalLens configuration is developer-managed");
     let current = root;
     for (const part of rel.split(sep)) {
       current = resolve(current, part);

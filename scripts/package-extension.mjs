@@ -1,3 +1,4 @@
+import "./build-extension.mjs";
 import { readFileSync, mkdirSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";

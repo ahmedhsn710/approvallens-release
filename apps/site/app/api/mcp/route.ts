@@ -1,3 +1,9 @@
+import {
+  RemoteReviewInput,
+  remoteAnalysis,
+} from "../../../../../packages/mcp/src/remote-review";
+import { validateReview } from "../../../../../packages/core/src/contracts";
+import { nebiusReviewer } from "../../../../../packages/core/src/nebius";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import {
@@ -49,7 +55,58 @@ export async function POST(request: Request) {
     return new Response("Invalid JSON", { status: 400 });
   }
   const live = authorized(request);
-  const server = new McpServer({ name: "approvallens", version: "0.4.0" });
+  const server = new McpServer({ name: "approvallens", version: "0.5.0" });
+  if (live)
+    server.registerTool(
+      "approvallens_review_evidence",
+      {
+        description:
+          "Review client-observed repository evidence. Advisory only; no filesystem access or execution authority.",
+        inputSchema: RemoteReviewInput,
+      },
+      async (input) => {
+        try {
+          if (
+            input.request.toolCall.name === "write_file" &&
+            input.request.toolCall.args.content !== "[CONTENT OMITTED]"
+          )
+            throw Error("Raw content not accepted");
+          if (
+            input.analysis.violations.length ||
+            input.analysis.coverage !== "complete"
+          )
+            throw Error("Local policy checks required");
+          if (process.env.NEBIUS_MODEL !== "nvidia/nemotron-3-super-120b-a12b")
+            throw Error("Unsupported model");
+          if (!(await reserveRemoteCall())) throw Error("Budget unavailable");
+          const analysis = remoteAnalysis(input);
+          const result = await nebiusReviewer("grounded")(
+            input.request,
+            analysis,
+          );
+          validateReview(result.output, analysis);
+          const output = {
+            ...result,
+            executable: false,
+            evidenceSource: "client-observed",
+          };
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify(output) }],
+            structuredContent: output,
+          };
+        } catch {
+          return {
+            isError: true,
+            content: [
+              {
+                type: "text" as const,
+                text: "Review unavailable or invalid. No approval issued.",
+              },
+            ],
+          };
+        }
+      },
+    );
   server.registerTool(
     "approvallens_examples",
     {

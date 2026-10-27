@@ -1,5 +1,9 @@
 # Cursor native guard
 
+## Bundled extension setup
+
+For new installations, follow [Extension setup](EXTENSION-SETUP.md). The steps below remain for source-development and existing manually managed services.
+
 ## Prerequisites and sample
 
 Use macOS or Linux, Node 24 and Cursor. From this checkout run `npm ci`, then `npm run demo:ready -- /tmp/al-settings-demo`. Choose a fresh short destination. This packages and installs the extension, creates a disposable sample and separate trusted state, starts the daemon, and opens the sample in Cursor. It prints paths for configuration, logs, process ID and diagnostics. No model is called and no write is approved by setup.

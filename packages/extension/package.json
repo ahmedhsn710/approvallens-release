@@ -2,7 +2,7 @@
   "name": "approvallens-cursor",
   "displayName": "ApprovalLens",
   "description": "Native tool review activity and explicit one-time file approvals.",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "publisher": "ahmedhsn710",
   "engines": {
     "vscode": "^1.96.0"
@@ -57,6 +57,30 @@
         "command": "approvallens.reject",
         "title": "ApprovalLens: Reject",
         "icon": "$(close)"
+      },
+      {
+        "command": "approvallens.enable",
+        "title": "ApprovalLens: Enable for this workspace"
+      },
+      {
+        "command": "approvallens.disable",
+        "title": "ApprovalLens: Disable for this workspace"
+      },
+      {
+        "command": "approvallens.applyRules",
+        "title": "ApprovalLens: Apply rules"
+      },
+      {
+        "command": "approvallens.openRules",
+        "title": "ApprovalLens: Edit rules"
+      },
+      {
+        "command": "approvallens.connect",
+        "title": "ApprovalLens: Connect hosted review"
+      },
+      {
+        "command": "approvallens.checkSetup",
+        "title": "ApprovalLens: Check setup"
       }
     ],
     "menus": {
@@ -65,6 +89,31 @@
           "command": "approvallens.refresh",
           "when": "view == approvallens.activity",
           "group": "navigation"
+        },
+        {
+          "command": "approvallens.enable",
+          "when": "view == approvallens.activity",
+          "group": "setup"
+        },
+        {
+          "command": "approvallens.openRules",
+          "when": "view == approvallens.activity",
+          "group": "setup"
+        },
+        {
+          "command": "approvallens.applyRules",
+          "when": "view == approvallens.activity",
+          "group": "setup"
+        },
+        {
+          "command": "approvallens.connect",
+          "when": "view == approvallens.activity",
+          "group": "setup"
+        },
+        {
+          "command": "approvallens.checkSetup",
+          "when": "view == approvallens.activity",
+          "group": "setup"
         }
       ],
       "view/item/context": [
@@ -90,7 +139,13 @@
           "description": "Absolute Unix socket path of the developer-owned local service."
         }
       }
-    }
+    },
+    "viewsWelcome": [
+      {
+        "view": "approvallens.activity",
+        "contents": "[Enable for this workspace](command:approvallens.enable)\n[Edit rules](command:approvallens.openRules) \u00b7 [Apply rules](command:approvallens.applyRules)\n[Connect hosted review](command:approvallens.connect)\n[Check setup](command:approvallens.checkSetup)"
+      }
+    ]
   },
   "license": "MIT",
   "files": [
@@ -99,7 +154,10 @@
     "README.md",
     "LICENSE",
     "evidence.cjs",
-    "prompts.cjs"
+    "prompts.cjs",
+    "onboarding.cjs",
+    "workspace.cjs",
+    "dist/**"
   ],
   "capabilities": {
     "untrustedWorkspaces": {
