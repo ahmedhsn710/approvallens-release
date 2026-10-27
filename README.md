@@ -67,4 +67,4 @@ Automated functional tests do not establish benchmark accuracy. Verification sta
 
 ## Next beta: shell inspection and data release
 
-The local 0.6.0 development build adds opt-in literal shell inspection and outbound sensitive-data checks. See [shell and egress implementation](docs/SHELL-AND-EGRESS.md) for policy configuration, boundaries and the next slices. The published 0.5.0 release does not include these changes yet.
+The local 0.6.0 development build adds opt-in structured shell inspection (read-only pipelines, command lists, quoting and per-command options) and outbound sensitive-data checks. See [shell and egress implementation](docs/SHELL-AND-EGRESS.md) for policy configuration, boundaries and the next slices. The published 0.5.0 release does not include these changes yet.

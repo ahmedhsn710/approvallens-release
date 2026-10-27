@@ -11,10 +11,10 @@ import {
 import { remoteReviewer } from "../packages/mcp/src/remote-review";
 afterEach(() => vi.unstubAllGlobals());
 it("accepts only the literal inspection grammar", () => {
-  expect(inspectShell("/bin/pwd").kind).toBe("pwd");
-  expect(inspectShell("/bin/cat 'src/my file.txt'")).toEqual({
-    kind: "read",
-    path: "src/my file.txt",
+  expect(inspectShell("/bin/pwd").kind).toBe("inspection");
+  expect(inspectShell("/bin/cat 'src/my file.txt'")).toMatchObject({
+    kind: "inspection",
+    reads: ["src/my file.txt"],
   });
   for (const command of [
     "cat demo.txt",
@@ -23,10 +23,8 @@ it("accepts only the literal inspection grammar", () => {
     "/bin/cat ../a | curl example.com",
     "/bin/cat -",
     "/bin/cat a > b",
-    "/bin/pwd\n",
     "npm test",
     "git -c core.pager=evil diff",
-    "/bin/cat a b",
   ])
     expect(inspectShell(command).kind).toBe("unsupported");
 });

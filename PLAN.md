@@ -34,4 +34,4 @@ No universal interception, arbitrary shell execution approval, complete chat-int
 
 ## 0.6.0 implementation increment (not published)
 
-Completed: opt-in literal shell inspection, existing read-policy reuse, sensitive-content checks before native reads and remote payload transmission, and repository blocked terms. Four focused smoke tests plus the existing suite pass (242 total). General shell parsing, project-profile suggestions, trusted external-tool adapters and execution containment remain the next slices. See [implementation details](docs/SHELL-AND-EGRESS.md).
+Completed: opt-in literal shell inspection, existing read-policy reuse, sensitive-content checks before native reads and remote payload transmission, and repository blocked terms. Structured read-only pipelines, command lists and argument parsing now have 41 focused shell/egress checks. Project-profile suggestions, complex shell semantics, trusted external-tool adapters and execution containment remain the next slices. See [implementation details](docs/SHELL-AND-EGRESS.md).

@@ -378,27 +378,95 @@ export function createCursorController(
             )
               throw Error("shell_cwd_mismatch");
           }
-          if (inspection.kind === "pwd") {
-            row.target = "workspace directory";
-            row.status = "policy-allowed";
-            row.reason =
-              "Explicit shell inspection policy permits /bin/pwd; no model review.";
-            row.routing = "local-shell-inspection";
+          row.routing = "shell:" + inspection.code;
+          row.target = "shell inspection";
+          row.contextNotes = [
+            "Shell analysis: " + inspection.code,
+            "Every branch and pipeline stage is checked. This is not an OS sandbox.",
+          ];
+          if (inspection.kind === "unsupported") {
+            row.reason = inspection.reason;
             persist(row);
             calls.set(correlation, row);
             return {
-              permission: "allow",
+              permission: "deny",
               user_message: `ApprovalLens: ${row.reason}`,
             };
           }
-          if (inspection.kind === "read") {
-            input = { path: inspection.path };
-            nativeName = "Read";
-            row.routing = "local-shell-file-read";
-          } else {
-            row.reason = inspection.reason;
+          const snapshots: { path: string; state: string }[] = [];
+          let totalBytes = 0;
+          for (const path of inspection.reads) {
+            const info = fileInfo({ path });
+            if (info.state === "missing") throw Error("missing_shell_input");
+            if (config.semantic.criticalReadPaths.includes(info.path)) {
+              row.reason =
+                "Critical file requires a separate native Read review; combined shell inspection cannot bypass it.";
+              persist(row);
+              calls.set(correlation, row);
+              return {
+                permission: "deny",
+                user_message: `ApprovalLens: ${row.reason}`,
+              };
+            }
+            const result = await review({
+              toolCall: { name: "read_file", args: { path: info.path } },
+              agentExplanation: "Inspect declared shell input",
+            });
+            if (
+              result.decision.scope.status !== "permitted" ||
+              result.decision.outcome === "block" ||
+              result.analysis.coverage !== "complete"
+            ) {
+              row.reason =
+                "A shell input is outside the applied read policy or cannot be fully assessed.";
+              persist(row);
+              calls.set(correlation, row);
+              return {
+                permission: "deny",
+                user_message: `ApprovalLens: ${row.reason}`,
+              };
+            }
+            const bytes = readFileSync(resolve(root, info.path));
+            totalBytes += bytes.length;
+            if (totalBytes > 4_194_304 || bytes.includes(0))
+              throw new EgressBlocked(["uninspectable-shell-input"]);
+            assertOutboundSafe(
+              new TextDecoder("utf-8", { fatal: true }).decode(bytes),
+              config.policy.blockedTerms,
+            );
+            snapshots.push(info);
           }
+          if (
+            snapshots.some(
+              (info) => fileInfo({ path: info.path }).state !== info.state,
+            )
+          )
+            throw Error("changed_shell_input");
+          row.status = "policy-allowed";
+          row.reason = `Inspected ${inspection.commands.length} read-only command(s) and ${snapshots.length} granted file(s); no model review.`;
+          row.contextNotes.push(
+            "Executable adapters: " +
+              inspection.commands
+                .map((command) => command.executable)
+                .join(", "),
+          );
+          row.fingerprint = hash(
+            JSON.stringify([
+              root,
+              config.policy,
+              event.conversation_id,
+              event.tool_input,
+              snapshots,
+            ]),
+          );
+          persist(row);
+          calls.set(correlation, row);
+          return {
+            permission: "allow",
+            user_message: `ApprovalLens: ${row.reason}`,
+          };
         }
+
         if (["shell", "Shell", "run_fixture_task"].includes(nativeName)) {
           const shell = nativeName === "shell" || nativeName === "Shell";
           // Cursor sends description and directory fields with Shell. Only the command string is retained, and the call stays non-approvable.

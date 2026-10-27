@@ -4,7 +4,21 @@
 
 The core has two transport-independent components: `shell-inspection.ts` recognizes a deliberately tiny literal command language; `egress.ts` blocks detected credentials and repository-defined sensitive terms. Neither executes a command or asks a model to certify arbitrary shell behavior.
 
-Enable shell inspection by adding `"shellInspection": true` to the repository rules and explicitly applying them. Only `/bin/pwd` and `/bin/cat` with one literal filename are eligible. Cat uses the existing exact read grant, workspace/symlink checks and sensitive-content checks. Paths containing spaces must use single quotes. Working directory must be the configured project root. No PATH lookup, environment overrides, pipelines, redirects, substitutions, scripts, command chains or Git commands are accepted. The setting is off by default.
+Enable shell inspection by adding `"shellInspection": true` to repository rules and explicitly applying them. The parser handles literal single/double quotes, escaped characters, multiple file operands, pipelines, `&&`, `||`, semicolons, newlines and comments. It checks **every branch**, including a branch that might not execute, rather than trusting short-circuit assumptions.
+
+Supported system executable adapters are `cat`, `head`, `tail`, `wc`, fixed-string `grep -F`, and `pwd`, under `/bin/` or `/usr/bin/`. Each has an explicit option allowlist. Files in every stage must pass exact grants, workspace/symlink checks, sensitive-data scanning and a final state recheck. Critical-read paths require a separate native Read review. Unbound stdin, follow mode, recursive search and file-loading options are denied. Inspection is bounded to 4,096 command characters, 16 commands, 32 distinct files, 1 MiB per file and 4 MiB total scanned content.
+
+Examples, after granting reads for `src/example.txt` and `README.md`:
+
+```sh
+/bin/cat "src/example.txt" README.md
+/bin/cat README.md | /usr/bin/grep -F -n "setup" | /usr/bin/head -n 20
+/bin/pwd && /usr/bin/wc -l README.md
+```
+
+Bare commands are intentionally unresolved: `cat` can be a function, alias or PATH replacement. The hook does not rewrite commands or control the launched environment. Absolute executables remain within the trusted system boundary; the guard does not hash OS binaries or isolate shell startup files. Working directory must match the configured project root.
+
+Unsupported requests now have specific classifications: network transfer, filesystem mutation, repository-tool execution, arbitrary code execution, unresolved executable, expansion, redirection, background execution, syntax error and resource bounds. A clean content scan cannot turn one into an allow. Redirections, here-documents, substitutions, globs, scripts, Git helpers and package-manager hooks still require separate effects/containment adapters. This is a conservative parser for an accepted shell subset, not a claim to implement all Bash, Zsh, Fish or PowerShell semantics.
 
 Example additions to an existing policy:
 
@@ -31,7 +45,7 @@ This is a conservative detection layer, not a guarantee that no sensitive inform
 ## Next implementation slices
 
 1. Project-profile suggestions and task-specific scopes, with explicit developer acceptance; do not auto-grant broad paths.
-2. A maintained general shell parser plus command-specific effect adapters, still abstaining on unresolved syntax.
+2. Extend the accepted grammar and verified command adapters; use a maintained full-language parser when adding complex control structures, with differential tests and fail-closed fallback.
 3. Trusted external-tool adapters bound to server identity, exact tool schema and destination; separate destination permission from data-release permission. Do not allow a tool solely by its name or URL string in arguments.
 4. Restricted execution for tests/builds/package managers; arbitrary native shell remains denied until that exists.
 5. Evaluate legitimate workflows, false positives and abstentions on independent fixtures before making accuracy claims.
@@ -39,3 +53,11 @@ This is a conservative detection layer, not a guarantee that no sensitive inform
 ## Smoke verification
 
 Focused cases cover literal inspection, chaining/substitution/redirection rejection, granted and ungranted reads, sensitive file reads, working-directory mismatch, external-tool denial and zero network calls for a sensitive remote request. No paid inference is needed for these checks.
+
+## Grammar reference
+
+The distinction between literal arguments and dynamic execution follows the [Bash reference manual](https://www.gnu.org/software/bash/manual/bash.html), especially shell expansions, pipelines and redirections. Parsing syntax alone never proves arbitrary program behavior safe.
+
+## Current verification
+
+41 focused shell/egress checks passed, including a real harmless `cat | grep -F | wc` pipeline executed only in a disposable fixture after the controller allowed it. Denial cases include hidden network stages, ungranted conditional branches, sensitive data piped into a filter, symlinks, critical-read paths, dynamic syntax and unsafe flags. These are functional regressions, not benchmark accuracy results or a live Cursor chat test.
