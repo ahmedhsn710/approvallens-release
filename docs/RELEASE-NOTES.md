@@ -1,9 +1,8 @@
-# ApprovalLens 0.5.0 — bundled workspace setup
+# ApprovalLens 0.6.0 — shell inspection and sensitive-data checks
 
-Install the extension and run **ApprovalLens: Enable for this workspace**. It bundles and starts the local companion, creates an editable rules file and merges project hooks/MCP configuration without replacing other integrations. No separate Node installation, source checkout or npm install is needed for this flow.
+- Opt-in structured shell inspection: literal quoting, pipelines, command lists and bounded read-only adapters for cat, head, tail, wc, grep -F and pwd. Every branch and input file must pass policy; unresolved operations stay blocked.
+- Sensitive-data checks on supported native reads and outgoing MCP/Nebius review evidence. Repository blocked terms complement known credential patterns. Matched values are not echoed in diagnostics.
+- Product-focused website, separate setup/verification and judge pages, and consolidated guidance.
+- Bundled installation remains one extension plus explicit workspace enablement. No separate terminal service is required.
 
-Rules are applied explicitly to a trusted snapshot outside the repository. Agent edits cannot silently relax active rules. The new commands support editing/applying rules, connecting hosted review, checking setup and disabling the workspace guard.
-
-The private MCP evidence-review tool accepts bounded client-observed evidence, omits raw write bodies and returns validated Nemotron findings. The local guard remains authoritative and waits for explicit human approval. Access tokens live in editor SecretStorage; hosted inference remains a limited pilot, not unlimited public access.
-
-macOS/Linux, single trusted local folder only. Native coverage remains limited to supported hook-delivered Read/whole-file Write/Delete operations. Shell and other unsupported hooked operations are denied; search may bypass Cursor hook coverage. There is no separate classifier model, OS sandbox or universal interception claim. Disable the workspace integration before uninstalling the extension.
+279 functional tests pass. macOS/Linux, single local workspace. Arbitrary scripts, network shell commands, redirections and unsupported host tools remain outside allowed coverage. Detection is not a sandbox or zero-egress guarantee. Hosted AI remains a credentialed, quota-limited pilot.

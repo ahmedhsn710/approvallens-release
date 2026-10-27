@@ -1,4 +1,4 @@
-# Bundled workspace integration (0.5.0)
+# Bundled workspace integration (0.6.0)
 
 ## User workflow
 
@@ -49,7 +49,7 @@ The server labels evidence as client-observed, not server-verified. Raw write bo
 ## Coverage and current limits
 
 - No separate small-model classifier exists. Routing is deterministic and shared with the original controller.
-- Supported mappings remain Read/whole-file Write/Delete. Shell and unsupported hook-delivered calls are denied, not safely executed. Built-in search may not emit compatible hooks. This is a restrictive pilot, not a general daily-driver agent firewall.
+- Supported mappings remain Read/whole-file Write/Delete. Shell inspection is opt-in and supports bounded read-only literal pipelines; scripts, network transfers, redirections and other unsupported hook-delivered calls remain denied. Built-in search may not emit compatible hooks. This is a restrictive pilot, not a general daily-driver agent firewall.
 - Current chat prose is not reliably supplied by Cursor. The model uses the applied developer intent; missing explanations are marked unknown.
 - Single local folder only; Windows, remote SSH/containers, and multi-root workspaces are not supported by this onboarding release.
 - No automatic account signup or individual quotas yet. The production pilot keeps the approved three-call aggregate cap. A broadly available AI service requires authentication and per-user quotas before opening access.
@@ -58,3 +58,5 @@ The server labels evidence as client-observed, not server-verified. Raw write bo
 ## Verification
 
 Automated tests cover idempotent setup, preserving other hooks/MCP servers, conflict/symlink rejection, applied-policy isolation, bundled companion startup without npm/SQLite, waiting for a human decision, protected rules, remote redaction and response validation. A simulated hook test is not a live Cursor chat test. Record UI/live validation separately before claiming support for a specific Cursor version.
+
+For the maintained installation steps and test matrix, use [the product setup guide](https://approvallens-release.vercel.app/guide). Detailed shell semantics and data boundaries are in [SHELL-AND-EGRESS.md](SHELL-AND-EGRESS.md).

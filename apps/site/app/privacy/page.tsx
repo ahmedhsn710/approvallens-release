@@ -6,7 +6,7 @@ export default function Privacy() {
         <Link className="brand" href="/">
           ◈ ApprovalLens
         </Link>
-        <Link href="/guide">Judge guide →</Link>
+        <Link href="/guide">Setup guide →</Link>
       </header>
       <main className="guide">
         <div className="section-kicker">DEVELOPMENT BETA / DATA BOUNDARIES</div>
@@ -46,9 +46,12 @@ export default function Privacy() {
         <section>
           <h2>Limits</h2>
           <p>
-            JSON comparisons cover configured fields, not arbitrary program
-            behavior. The model can be wrong. The configured task may differ
-            from the current chat intent. Unsupported operations are not
+            Sensitive-data checks detect known credential patterns and
+            configured blocked terms; encoded or unfamiliar secrets may evade
+            detection. They do not control network traffic outside supported
+            hooks. JSON comparisons cover configured fields, not arbitrary
+            program behavior. The model can be wrong. The configured task may
+            differ from the current chat intent. Unsupported operations are not
             certified safe. Native host-hook coverage is not universal, and
             local same-user processes remain in the trust boundary.
           </p>

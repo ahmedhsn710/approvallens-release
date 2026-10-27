@@ -2,7 +2,7 @@
 
 **Proof before permission.** Review native agent-tool activity by chat, inspect policy evidence, and decide on eligible waiting file changes.
 
-[Product page](https://approvallens-release.vercel.app) · [Setup guide](https://github.com/ahmedhsn710/approvallens-release/blob/main/docs/NATIVE-GUARD.md) · [Source](https://github.com/ahmedhsn710/approvallens-release)
+[Product page](https://approvallens-release.vercel.app) · [Setup guide](https://github.com/ahmedhsn710/approvallens-release/blob/main/docs/EXTENSION-SETUP.md) · [Source](https://github.com/ahmedhsn710/approvallens-release)
 
 ## Install and try
 
@@ -42,3 +42,9 @@ A model error stops native LIVE review across restarts. Budget reservations rema
 Run **ApprovalLens: Check setup**. Use **Disable for this workspace** before uninstalling; it removes only owned hook and MCP entries and stops the companion. Removing the extension first leaves fail-closed hooks which need manual removal. Rules edits become active only after **Apply rules**. The applied policy and local audit records live outside the repository under `~/.approvallens/`.
 
 MIT licensed. Release preview; namespace verification status is shown by Open VSX.
+
+## Shell inspection and sensitive data (0.6.0)
+
+Explicitly enable `shellInspection` in rules and apply them. Supported absolute system executables include cat, head, tail, wc, fixed-string grep and pwd, with controlled options. Pipelines and conditional lists check every file and stage. Bare commands, scripts, redirections and network transfers remain denied. Supported reads and outbound review payloads are checked for common credentials and policy `blockedTerms`; this is detection, not guaranteed zero-egress protection.
+
+See the [setup and verification cases](https://approvallens-release.vercel.app/guide). No terminal service is required for installed users.

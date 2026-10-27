@@ -32,6 +32,6 @@ Use release status as the evidence ledger; do not equate implementation with pro
 
 No universal interception, arbitrary shell execution approval, complete chat-intent reconstruction or OS sandbox claim. No small-model routing classifier exists. Keep the hosted walkthrough secondary to installed native protection. Legacy manual service commands remain for developers and must not be presented as normal installation steps.
 
-## 0.6.0 implementation increment (not published)
+## 0.6.0 release
 
-Completed: opt-in literal shell inspection, existing read-policy reuse, sensitive-content checks before native reads and remote payload transmission, and repository blocked terms. Structured read-only pipelines, command lists and argument parsing now have 41 focused shell/egress checks. Project-profile suggestions, complex shell semantics, trusted external-tool adapters and execution containment remain the next slices. See [implementation details](docs/SHELL-AND-EGRESS.md).
+Structured shell inspection and outbound data checks implemented; 279 functional tests pass. Product landing page, setup/test guide and separate judge page updated. Release publication and verification are recorded in RELEASE-STATUS.md.

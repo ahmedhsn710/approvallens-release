@@ -340,10 +340,10 @@ export function createCursorController(
       };
       let permission = "deny";
       try {
-        let input = event.tool_input;
+        const input = event.tool_input;
         let call: ToolCall;
         let state = "";
-        let nativeName =
+        const nativeName =
           (
             {
               read_file: "Read",

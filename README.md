@@ -6,7 +6,7 @@ A Cursor extension that checks supported agent file operations against developer
 
 ## Start in Cursor
 
-1. Install ApprovalLens **0.5.0 or newer**. If the registry still shows an older version, install the 0.5.0 VSIX from GitHub Releases. Open one trusted local project on macOS or Linux.
+1. Install ApprovalLens **0.6.0 or newer**. If the registry still shows an older version, install the 0.6.0 VSIX from GitHub Releases. Open one trusted local project on macOS or Linux.
 2. Run **ApprovalLens: Enable for this workspace** and confirm. The extension bundles the companion and installs project hooks, an editable rules file, and the public MCP configuration. No separate Node installation, clone, or terminal service is required.
 3. Edit `.approvallens/rules.json`, then run **ApprovalLens: Apply rules**. The starter permits only reading `package.json`. Exact path grants are intentional; unsupported operations are denied.
 4. Use a supported native Read, whole-file Write, or Delete. Ordinary permitted reads pass locally; eligible mutations wait for your decision. Activity is grouped by chat.
@@ -30,7 +30,7 @@ Hard policy violations and incomplete evidence stop locally. Rules-only reviews 
 
 ## Boundaries
 
-This is a restrictive development beta, not a universal agent firewall. Supported adapters cover Read/whole-file Write/Delete. Shell, patches and other unsupported hook-delivered calls are denied. Built-in search may not deliver compatible hooks and therefore cannot be promised interception or logging. No separate small-model classifier exists: routing is deterministic. Single local folder only; Windows, remote workspaces and multi-root are not supported by bundled onboarding.
+This is a restrictive development beta, not a universal agent firewall. Supported adapters cover Read/whole-file Write/Delete. Selected literal read-only shell commands are available through opt-in shell inspection. Patches and other unsupported hook-delivered calls are denied. Built-in search may not deliver compatible hooks and therefore cannot be promised interception or logging. No separate small-model classifier exists: routing is deterministic. Single local folder only; Windows, remote workspaces and multi-root are not supported by bundled onboarding.
 
 The applied rules snapshot lives outside the repository. Changes to the editable file require explicit application. Supported agent writes to ApprovalLens and Cursor security configuration are blocked. This is not an OS sandbox or protection against another process running as your user.
 
@@ -65,6 +65,6 @@ The package command bundles the companion, policy parser and hook. Install the g
 
 Automated functional tests do not establish benchmark accuracy. Verification status and remaining external dependencies are recorded in [release status](docs/RELEASE-STATUS.md). Original research provenance is in [provenance](docs/PROVENANCE.md). MIT licensed; see [LICENSE](LICENSE).
 
-## Next beta: shell inspection and data release
+## Shell and data checks
 
-The local 0.6.0 development build adds opt-in structured shell inspection (read-only pipelines, command lists, quoting and per-command options) and outbound sensitive-data checks. See [shell and egress implementation](docs/SHELL-AND-EGRESS.md) for policy configuration, boundaries and the next slices. The published 0.5.0 release does not include these changes yet.
+Version 0.6.0 adds opt-in read-only shell pipelines, command lists and argument checks, plus sensitive-data inspection before supported reads and remote review transmission. See [shell and egress](docs/SHELL-AND-EGRESS.md) for exact coverage. Follow the [setup guide](https://approvallens-release.vercel.app/guide) for practical verification cases; the [judge walkthrough](https://approvallens-release.vercel.app/judges) is separate.

@@ -56,7 +56,7 @@ export async function POST(request: Request) {
     return new Response("Invalid JSON", { status: 400 });
   }
   const live = authorized(request);
-  const server = new McpServer({ name: "approvallens", version: "0.5.0" });
+  const server = new McpServer({ name: "approvallens", version: "0.6.0" });
   if (live)
     server.registerTool(
       "approvallens_review_evidence",

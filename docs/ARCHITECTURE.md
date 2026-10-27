@@ -38,4 +38,4 @@ Change policy/analysis semantics in shared packages, then exercise them through 
 
 ## Limits
 
-Supported native mappings are Read/whole-file Write/Delete. Search coverage depends on host events; unsupported delivered calls fail closed. No OS sandbox, universal interception, per-user hosted quotas, automatic signup or Windows support is claimed. Active policy is explicit developer intent, not an assumed complete transcript of the chat.
+Supported native mappings are Read/whole-file Write/Delete. Opt-in shell inspection checks supported read-only pipelines and all branches using exact file grants and egress checks. Search coverage depends on host events; unsupported delivered calls fail closed. No OS sandbox, universal interception, per-user hosted quotas, automatic signup or Windows support is claimed. Active policy is explicit developer intent, not an assumed complete transcript of the chat.
