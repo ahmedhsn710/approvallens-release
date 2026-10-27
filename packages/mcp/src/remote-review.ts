@@ -1,3 +1,4 @@
+import { assertOutboundSafe } from "../../core/src/egress";
 import { z } from "zod";
 import {
   Request,
@@ -61,6 +62,7 @@ export function remoteReviewer(
           }
         : request;
     const input = RemoteReviewInput.parse({ request: sanitized, analysis });
+    assertOutboundSafe(input);
     const body = JSON.stringify({
       jsonrpc: "2.0",
       id: 1,

@@ -64,3 +64,7 @@ The package command bundles the companion, policy parser and hook. Install the g
 ## Evidence and license
 
 Automated functional tests do not establish benchmark accuracy. Verification status and remaining external dependencies are recorded in [release status](docs/RELEASE-STATUS.md). Original research provenance is in [provenance](docs/PROVENANCE.md). MIT licensed; see [LICENSE](LICENSE).
+
+## Next beta: shell inspection and data release
+
+The local 0.6.0 development build adds opt-in literal shell inspection and outbound sensitive-data checks. See [shell and egress implementation](docs/SHELL-AND-EGRESS.md) for policy configuration, boundaries and the next slices. The published 0.5.0 release does not include these changes yet.

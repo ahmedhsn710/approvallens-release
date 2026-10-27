@@ -1,3 +1,4 @@
+import { assertOutboundSafe } from "./egress";
 import type { Request } from "./contracts";
 import {
   PROMPT_VERSION,
@@ -82,6 +83,7 @@ export function nebiusReviewer(mode: "grounded" | "raw"): Reviewer {
           }
         : { ...common, toolCall: tool };
 
+    assertOutboundSafe(payload);
     const response = await fetch(endpoint, {
       method: "POST",
       redirect: "error",

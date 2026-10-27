@@ -1,3 +1,4 @@
+import { assertOutboundSafe, EgressBlocked } from "../../core/src/egress";
 import { LocalHistory } from "../../core/src/evidence/local-history";
 import {
   JsonReplacement,
@@ -91,13 +92,24 @@ export function createReviewService(
       if (busy) admissionError = "review_busy";
       else {
         try {
+          assertOutboundSafe(
+            {
+              developerIntent: request.developerIntent,
+              agentExplanation,
+              analysis: preliminary.analysis,
+            },
+            policy.blockedTerms,
+          );
           if (eligibleBackend.halted?.()) admissionError = "live_review_halted";
           else if (!eligibleBackend.reserve())
             admissionError = eligibleBackend.halted?.()
               ? "live_review_halted"
               : "live_budget_exhausted";
-        } catch {
-          admissionError = "budget_unavailable";
+        } catch (error) {
+          admissionError =
+            error instanceof EgressBlocked
+              ? "outbound_data_blocked"
+              : "budget_unavailable";
         }
       }
     }

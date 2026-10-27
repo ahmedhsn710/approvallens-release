@@ -1,3 +1,4 @@
+import { assertOutboundSafe } from "../../../../../packages/core/src/egress";
 import {
   RemoteReviewInput,
   remoteAnalysis,
@@ -78,6 +79,7 @@ export async function POST(request: Request) {
             throw Error("Local policy checks required");
           if (process.env.NEBIUS_MODEL !== "nvidia/nemotron-3-super-120b-a12b")
             throw Error("Unsupported model");
+          assertOutboundSafe(input);
           if (!(await reserveRemoteCall())) throw Error("Budget unavailable");
           const analysis = remoteAnalysis(input);
           const result = await nebiusReviewer("grounded")(

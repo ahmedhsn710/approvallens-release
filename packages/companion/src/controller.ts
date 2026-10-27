@@ -1,3 +1,5 @@
+import { assertOutboundSafe, EgressBlocked } from "../../core/src/egress";
+import { inspectShell } from "../../core/src/shell-inspection";
 import { captureLocalHistory } from "../../core/src/evidence/local-history";
 import { nativeApprovalPrerequisites } from "../../mcp/src/approval";
 import { createEvidenceProvider } from "../../mcp/src/evidence";
@@ -338,10 +340,10 @@ export function createCursorController(
       };
       let permission = "deny";
       try {
-        const input = event.tool_input;
+        let input = event.tool_input;
         let call: ToolCall;
         let state = "";
-        const nativeName =
+        let nativeName =
           (
             {
               read_file: "Read",
@@ -349,6 +351,54 @@ export function createCursorController(
               delete_file: "Delete",
             } as Record<string, string>
           )[event.tool_name] ?? event.tool_name;
+        // Never persist raw outbound payloads or matched secret values.
+        if (!["Read", "Write", "Delete"].includes(nativeName)) {
+          assertOutboundSafe(input, config.policy.blockedTerms);
+        }
+        if (
+          ["shell", "Shell"].includes(nativeName) &&
+          config.policy.shellInspection
+        ) {
+          const inspection = inspectShell(input.command);
+          const allowedShellKeys = [
+            "command",
+            "description",
+            "working_directory",
+            "cwd",
+            "timeout",
+            "block_until_ms",
+          ];
+          if (Object.keys(input).some((key) => !allowedShellKeys.includes(key)))
+            throw Error("unsupported_shell_options");
+          for (const key of ["working_directory", "cwd"]) {
+            if (
+              input[key] !== undefined &&
+              (typeof input[key] !== "string" ||
+                realpathSync(resolve(root, input[key] as string)) !== root)
+            )
+              throw Error("shell_cwd_mismatch");
+          }
+          if (inspection.kind === "pwd") {
+            row.target = "workspace directory";
+            row.status = "policy-allowed";
+            row.reason =
+              "Explicit shell inspection policy permits /bin/pwd; no model review.";
+            row.routing = "local-shell-inspection";
+            persist(row);
+            calls.set(correlation, row);
+            return {
+              permission: "allow",
+              user_message: `ApprovalLens: ${row.reason}`,
+            };
+          }
+          if (inspection.kind === "read") {
+            input = { path: inspection.path };
+            nativeName = "Read";
+            row.routing = "local-shell-file-read";
+          } else {
+            row.reason = inspection.reason;
+          }
+        }
         if (["shell", "Shell", "run_fixture_task"].includes(nativeName)) {
           const shell = nativeName === "shell" || nativeName === "Shell";
           // Cursor sends description and directory fields with Shell. Only the command string is retained, and the call stays non-approvable.
@@ -401,6 +451,16 @@ export function createCursorController(
           if (Object.keys(input).some((key) => !allowedKeys.includes(key)))
             throw Error("unsupported_arguments");
           const info = fileInfo(input);
+          if (nativeName === "Read" && info.state !== "missing") {
+            // Reading returns data to the agent/provider, even without a network tool.
+            const bytes = readFileSync(resolve(root, info.path));
+            if (bytes.includes(0))
+              throw new EgressBlocked(["uninspectable-binary-read"]);
+            assertOutboundSafe(
+              bytes.toString("utf8"),
+              config.policy.blockedTerms,
+            );
+          }
           row.target = info.path;
           state = info.state;
           if (nativeName === "Read")
@@ -609,10 +669,12 @@ export function createCursorController(
             }
           }
         }
-      } catch {
+      } catch (error) {
         row.status = "blocked";
         row.reason =
-          "Invalid, ambiguous, outside-workspace or unsupported file operation.";
+          error instanceof EgressBlocked
+            ? error.message
+            : "Invalid, ambiguous, outside-workspace or unsupported file operation.";
         row.canApprove = false;
       }
       persist(row);
