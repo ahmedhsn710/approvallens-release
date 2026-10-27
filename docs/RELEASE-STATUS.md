@@ -11,7 +11,7 @@
 
 Open VSX now reports a **verified publisher**. The namespace request was closed as completed by a maintainer. Token-based publishing remains configured; OIDC migration has not been performed.
 
-The 0.5.0 release workflow passed every check and reported a successful Open VSX upload. Public registry propagation is being checked separately; use the versioned GitHub VSIX if the library still shows 0.4.1.
+The 0.5.0 release workflow passed every check and reported a successful Open VSX upload. Public version API independently confirms 0.5.0 with verified publisher status and a download URL. The GitHub release VSIX checksum matched the published SHA256SUMS and that downloaded artifact installed successfully in Cursor.
 
 ## Validation evidence
 
@@ -33,7 +33,6 @@ Two of the three approved model-call reservations have been used by these tests.
 
 ## Outstanding work beyond this beta
 
-- Confirm public Open VSX propagation independently from the successful upload.
 - Optional OIDC migration now that namespace ownership is verified.
 - Independent benchmark labeling and a larger judge-testing budget.
 - Windows, remote/multi-root workspaces and broader verified native adapters.
