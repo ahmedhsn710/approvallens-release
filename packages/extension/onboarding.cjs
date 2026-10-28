@@ -1,10 +1,89 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
-const { createHash } = require("node:crypto");
+const { createHash, randomBytes } = require("node:crypto");
 const { spawn } = require("node:child_process");
 const { createConnection } = require("node:net");
 const setup = require("./workspace.cjs");
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+// Native modal dialogs do not scroll, so a long path list clips Suggest rules.
+function inventoryConsentHtml(input, nonce) {
+  const paths = input.paths
+    .map((file) => `<li>${escapeHtml(file)}</li>`)
+    .join("");
+  const stack = input.stack.length
+    ? escapeHtml(input.stack.join(", "))
+    : "none";
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';">
+<style nonce="${nonce}">
+  html, body { height: 100%; margin: 0; overflow: hidden; }
+  body { height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; font-family: var(--vscode-font-family); font-size: var(--vscode-font-size); color: var(--vscode-foreground); background: var(--vscode-editor-background); }
+  header, footer { flex: none; padding: 12px 16px; }
+  header p { margin: 0 0 8px; }
+  #files { flex: 1; min-height: 0; overflow: auto; padding: 0 16px 12px; }
+  ul { margin: 0; padding-left: 1.25em; }
+  li { margin: 2px 0; font-family: var(--vscode-editor-font-family, monospace); word-break: break-all; }
+  footer { display: flex; gap: 8px; border-top: 1px solid var(--vscode-panel-border); background: var(--vscode-editor-background); }
+  button { font: inherit; border: 0; padding: 6px 14px; cursor: pointer; color: var(--vscode-button-foreground); background: var(--vscode-button-background); }
+  button:hover { background: var(--vscode-button-hoverBackground); }
+  button.secondary { color: var(--vscode-button-secondaryForeground); background: var(--vscode-button-secondaryBackground); }
+</style>
+</head>
+<body>
+<header>
+  <p><strong>${input.paths.length} paths</strong> will be sent with stack labels (${stack}) and the intent below.</p>
+  <p>Intent: ${escapeHtml(input.intent)}</p>
+  <p>Only these paths, stack labels and intent are sent to Vercel and Nebius. No source contents. The result is an unapplied draft.</p>
+</header>
+<div id="files"><ul>${paths}</ul></div>
+<footer>
+  <button id="suggest" type="button">Suggest rules</button>
+  <button id="cancel" class="secondary" type="button">Cancel</button>
+</footer>
+<script nonce="${nonce}">
+  const vscode = acquireVsCodeApi();
+  document.getElementById("suggest").addEventListener("click", () => vscode.postMessage({ agree: true }));
+  document.getElementById("cancel").addEventListener("click", () => vscode.postMessage({ agree: false }));
+</script>
+</body>
+</html>`;
+}
+function confirmInventory(vscode, input) {
+  const nonce = randomBytes(16).toString("base64url");
+  const panel = vscode.window.createWebviewPanel(
+    "approvallens.inventoryConsent",
+    "Send this inventory to Nemotron?",
+    vscode.ViewColumn.Active,
+    { enableScripts: true, retainContextWhenHidden: true },
+  );
+  panel.webview.html = inventoryConsentHtml(input, nonce);
+  return new Promise((resolve) => {
+    let settled = false;
+    const subscription = panel.webview.onDidReceiveMessage((body) => {
+      if (!body || (body.agree !== true && body.agree !== false)) return;
+      finish(body.agree === true);
+    });
+    panel.onDidDispose(() => finish(false));
+    function finish(agree) {
+      if (settled) return;
+      settled = true;
+      subscription.dispose();
+      panel.dispose();
+      resolve(agree);
+    }
+  });
+}
 function register(vscode, context) {
   let child,
     socket = "",
@@ -267,17 +346,7 @@ function register(vscode, context) {
       throw Error(
         "Project inventory exceeds the hosted request limit; open a smaller project folder. No partial inventory was sent",
       );
-    const agree = await vscode.window.showWarningMessage(
-      "Send this inventory to Nemotron?",
-      {
-        modal: true,
-        detail:
-          JSON.stringify(input, null, 2) +
-          "\nOnly these paths, stack labels and intent are sent to Vercel and Nebius. No source contents. The result is an unapplied draft.",
-      },
-      "Suggest rules",
-    );
-    if (agree !== "Suggest rules") return;
+    if (!(await confirmInventory(vscode, input))) return;
     const result = await vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Notification,
@@ -387,4 +456,4 @@ function register(vscode, context) {
   });
   return { socketPath: () => socket };
 }
-module.exports = { register };
+module.exports = { register, inventoryConsentHtml };

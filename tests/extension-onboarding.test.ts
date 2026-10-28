@@ -16,6 +16,7 @@ import { spawn } from "node:child_process";
 import { createConnection } from "node:net";
 const require = createRequire(import.meta.url);
 const setup = require("../packages/extension/workspace.cjs");
+const onboarding = require("../packages/extension/onboarding.cjs");
 const roots: string[] = [];
 function fixture() {
   const base = mkdtempSync(join(tmpdir(), "al-onboard-"));
@@ -200,4 +201,23 @@ describe("bundled extension onboarding", () => {
       }
     }
   }, 10000);
+  it("keeps the rule-suggestion file list scrollable with the confirm button in view", () => {
+    const html = onboarding.inventoryConsentHtml(
+      {
+        intent: "fix <script>alert(1)</script>",
+        paths: ["src/a.ts", "a&b/<tag>.ts"],
+        stack: ["TypeScript"],
+      },
+      "nonce-test",
+    );
+    expect(html).toContain('id="files"');
+    expect(html).toContain("overflow: auto");
+    expect(html).toContain('id="suggest"');
+    expect(html).toContain(">Suggest rules<");
+    expect(html).toContain("script-src 'nonce-nonce-test'");
+    expect(html).toContain("fix &lt;script&gt;alert(1)&lt;/script&gt;");
+    expect(html).toContain("a&amp;b/&lt;tag&gt;.ts");
+    expect(html).not.toContain("<script>alert");
+    expect(html).not.toContain("<tag>");
+  });
 });
