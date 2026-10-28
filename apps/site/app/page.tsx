@@ -184,7 +184,7 @@ export default function Home() {
               [
                 "01",
                 "Rules you control",
-                "Define exact file permissions and task intent in your project. Changes become active only when you explicitly apply them.",
+                "Ask Nemotron to draft exact file permissions from selected paths and task intent. Review and explicitly apply them; suggestions never activate themselves.",
               ],
               [
                 "02",
@@ -252,8 +252,9 @@ export default function Home() {
               <div>
                 <h3>Apply a narrow policy</h3>
                 <p>
-                  Choose the files and operations your task needs. Shell
-                  inspection is an explicit opt-in.
+                  Write rules yourself or connect hosted review for a Nemotron
+                  draft. Review the exact grants before applying. Shell
+                  inspection remains an explicit opt-in.
                 </p>
               </div>
             </li>

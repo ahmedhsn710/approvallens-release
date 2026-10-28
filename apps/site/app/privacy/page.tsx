@@ -28,9 +28,10 @@ export default function Privacy() {
           </p>
           <p>
             The application does not intentionally log raw requests.
-            Hosting-provider operational logs and metadata may still exist. Live
-            call reservations persist as aggregate counters in the configured
-            Redis service; they do not contain your proposed code.
+            Hosting-provider operational logs and metadata may still exist. In
+            capped mode, live call reservations persist as aggregate counters in
+            the configured Redis service; they do not contain your proposed
+            code.
           </p>
         </section>
         <section>
