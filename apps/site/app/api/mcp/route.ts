@@ -60,13 +60,13 @@ export async function POST(request: Request) {
     return new Response("Invalid JSON", { status: 400 });
   }
   const live = authorized(request);
-  const server = new McpServer({ name: "approvallens", version: "0.7.0" });
+  const server = new McpServer({ name: "approvallens", version: "0.7.1" });
   if (live)
     server.registerTool(
       "approvallens_suggest_rules",
       {
         description:
-          "Suggest an unapplied policy draft from developer-selected paths and intent. No file contents, execution or automatic application.",
+          "Suggest an unapplied policy draft from automatically collected project paths and intent. No file contents, execution or automatic application.",
         inputSchema: RuleSuggestionInput,
       },
       async (input) => {

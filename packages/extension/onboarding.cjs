@@ -246,11 +246,10 @@ function register(vscode, context) {
     const { assertOutboundSafe } = require("./dist/egress.cjs");
     const current = parsePolicy(root);
     const found = inventory(root);
-    const selected = await vscode.window.showQuickPick(found.paths, {
-      canPickMany: true,
-      title: "Select up to 40 files relevant to this task (paths only)",
-    });
-    if (!selected?.length) return;
+    if (!found.paths.length)
+      throw Error(
+        "No eligible project files found after excluding hidden, generated and sensitive paths",
+      );
     const intent = await vscode.window.showInputBox({
       prompt:
         "What should the coding agent accomplish? Do not include secrets.",
@@ -260,10 +259,14 @@ function register(vscode, context) {
     if (!intent) return;
     const input = RuleSuggestionInput.parse({
       intent,
-      paths: selected,
+      paths: found.paths,
       stack: found.stack,
     });
     assertOutboundSafe(input, current.blockedTerms || []);
+    if (Buffer.byteLength(JSON.stringify(input), "utf8") > 30000)
+      throw Error(
+        "Project inventory exceeds the hosted request limit; open a smaller project folder. No partial inventory was sent",
+      );
     const agree = await vscode.window.showWarningMessage(
       "Send this inventory to Nemotron?",
       {

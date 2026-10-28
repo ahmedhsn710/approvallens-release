@@ -25,7 +25,7 @@ export default function Guide() {
       </header>
       <main className="guide">
         <div className="section-kicker">
-          SETUP & VERIFICATION / VERSION 0.7.0
+          SETUP & VERIFICATION / VERSION 0.7.1
         </div>
         <h1>
           Your workspace.
@@ -40,9 +40,17 @@ export default function Guide() {
           <h2>New: suggest rules for your project</h2>
           <p>
             After enabling the workspace and connecting hosted review, run{" "}
-            <b>ApprovalLens: Suggest project rules</b>. Select up to 40 files
-            and describe your task. Preview the exact paths and stack labels
-            before sending them to Nemotron. No file contents are uploaded.
+            <b>ApprovalLens: Suggest project rules</b>. Describe your task; the
+            extension automatically inventories the project. Preview the exact
+            paths and stack labels before sending them to Nemotron. No file
+            contents are uploaded.
+          </p>
+          <p>
+            Hidden files, likely credential files, symlinks and common generated
+            folders are excluded. The current limit is 800 eligible paths and 30
+            KB of inventory. Larger inventories stop with an explanation rather
+            than silently omit files. Seeing a file does not automatically grant
+            permission to change it.
           </p>
           <p>
             Review the unapplied JSON draft and its explanations in the setup
@@ -61,9 +69,9 @@ export default function Guide() {
           <h2>1. Install and enable</h2>
           <p>
             In Cursor’s Extensions view, search <b>ApprovalLens</b> by{" "}
-            <b>ahmedhsn710</b>. Install version 0.7.0 or newer. If your library
+            <b>ahmedhsn710</b>. Install version 0.7.1 or newer. If your library
             is still cached,{" "}
-            <a href="https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.7.0">
+            <a href="https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.7.1">
               download the release VSIX
             </a>{" "}
             and use Install from VSIX.
@@ -204,6 +212,88 @@ export default function Guide() {
           </p>
           <p>
             <Link href="/privacy">Privacy and coverage limits →</Link>
+          </p>
+        </section>
+        <section>
+          <h2>Every extension command, explained</h2>
+          <p>
+            Find these in Cursor’s Command Palette by typing ApprovalLens.
+            Enabling the MCP entry alone does not connect paid hosted inference.
+            Connect hosted review requires the private ApprovalLens access
+            token, not your Nebius key; wait for the success message.
+          </p>
+          <div className="spec-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Command</th>
+                  <th>What it does</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  [
+                    "Enable for this workspace",
+                    "Adds owned hooks and MCP configuration and starts the bundled local guard. Initially uses local rules only.",
+                  ],
+                  [
+                    "Connect hosted review",
+                    "Verifies your private access token, saves it in editor SecretStorage for this project and enables Nemotron review.",
+                  ],
+                  [
+                    "Suggest project rules",
+                    "Inventories eligible project paths automatically, previews outgoing metadata and opens an unapplied Nemotron policy draft.",
+                  ],
+                  [
+                    "Edit rules",
+                    "Opens .approvallens/rules.json for you to edit. The coding agent cannot grant itself permissions.",
+                  ],
+                  [
+                    "Apply rules",
+                    "After confirmation, activates a snapshot of your saved policy. Saving alone does not change the guard.",
+                  ],
+                  [
+                    "Check setup",
+                    "Shows the workspace, companion status and configuration locations in ApprovalLens setup output.",
+                  ],
+                  [
+                    "Refresh",
+                    "Reloads the activity list. It does not reset policy or approve requests.",
+                  ],
+                  [
+                    "Inspect action",
+                    "Shows the selected tool request, observed evidence, findings and outcome.",
+                  ],
+                  [
+                    "Approve once",
+                    "Allows one eligible pending request after validation and state checks. Cannot override a hard policy denial.",
+                  ],
+                  [
+                    "Reject",
+                    "Denies the pending request; Cursor receives a denial rather than permission to proceed.",
+                  ],
+                  [
+                    "Copy demo prompt",
+                    "Copies the demonstration prompt associated with the action, when available.",
+                  ],
+                  [
+                    "Disable for this workspace",
+                    "Removes ApprovalLens-owned hooks and MCP entry and stops its guard. Preserves rules and activity history.",
+                  ],
+                ].map(([name, explanation]) => (
+                  <tr key={name}>
+                    <td>
+                      <b>{name}</b>
+                    </td>
+                    <td>{explanation}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The advanced socket-path setting is for a manually managed local
+            service. Leave it empty for the bundled extension setup.
           </p>
         </section>
       </main>

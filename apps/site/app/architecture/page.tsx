@@ -1,4 +1,5 @@
 import Link from "next/link";
+import StateFlow from "./state-flow";
 
 function Flow({ label, steps }: { label: string; steps: string[] }) {
   return (
@@ -39,6 +40,10 @@ export default function Architecture() {
           control the supported native approval boundary.
         </p>
         <section>
+          <h2>Request states and decisions</h2>
+          <StateFlow />
+        </section>
+        <section>
           <h2>One extension. Two trust boundaries.</h2>
           <Flow
             label="On your computer · enforcement boundary"
@@ -74,10 +79,10 @@ export default function Architecture() {
             label="Suggested rules are proposals, never authority"
             steps={[
               "Detect stack from file names; exclude hidden and sensitive paths",
-              "Developer selects up to 40 paths and supplies task intent",
+              "Automatically inventory eligible project paths and ask for task intent",
               "Preview the exact inventory before transmission",
               "Nemotron proposes minimal read/write grants with reasons",
-              "Validate every grant against the selected paths",
+              "Validate every grant against the automatically collected project paths",
               "Review draft, save rules, explicitly apply",
             ]}
           />

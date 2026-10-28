@@ -5,7 +5,7 @@ Target: 2 minutes 50 seconds. Use the installed release in a disposable Cursor p
 | Time      | Action and evidence                                                                                                 |
 | --------- | ------------------------------------------------------------------------------------------------------------------- |
 | 0:00–0:20 | Explain why an agent's description does not establish what an action will change.                                   |
-| 0:20–0:45 | Select project paths, preview metadata and request a Nemotron rule draft. Review and explicitly apply it.           |
+| 0:20–0:45 | Scan the project, preview metadata and request a Nemotron rule draft. Review and explicitly apply it.               |
 | 0:45–1:10 | Attempt an ungranted path or protected JSON field change. Show local denial and unchanged contents.                 |
 | 1:10–1:55 | Request an eligible configuration change in LIVE mode. Show actual Nemotron findings while the native action waits. |
 | 1:55–2:20 | Reject and verify unchanged contents; then approve a legitimate request once and show Cursor resume.                |

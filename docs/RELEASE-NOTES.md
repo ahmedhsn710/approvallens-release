@@ -1,7 +1,5 @@
-# ApprovalLens 0.7.0 — suggested project rules
+# ApprovalLens 0.7.1 — automatic project inventory
 
-Nemotron suggests minimal read/write grants from selected paths and task intent. The extension previews outgoing metadata and opens a validated, unapplied policy draft. Existing restrictions are retained; explicit application is required.
+Rule suggestions now inventory the project automatically without a file picker. Hidden, generated, symlinked and likely sensitive paths are excluded. The preview shows exactly what will be sent; contents are never uploaded. Up to 800 paths and 30 KB of inventory are supported; oversized scans fail explicitly instead of silently truncating. Suggested permissions remain minimal and unapplied.
 
-Adds a public architecture page and removes recording directions from the judge guide. Explicit owner-configured uncapped testing removes the aggregate ceiling for authenticated calls; anonymous inference remains unavailable.
-
-Single local workspace on macOS/Linux. Native interception and shell coverage remain bounded.
+The website documents every extension command and includes an accessible SVG state diagram with approval, denial, review failure and state-change branches.

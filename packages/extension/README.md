@@ -51,4 +51,4 @@ See the [setup and verification cases](https://approvallens-release.vercel.app/g
 
 # Suggested project rules
 
-After connecting hosted review, run **ApprovalLens: Suggest project rules**. Select task-relevant paths, describe the task and inspect the disclosure preview. Nemotron returns an exact-path read/write policy draft and reasons. No source contents are uploaded. Existing restrictions remain in the draft; review it, save to `.approvallens/rules.json` and explicitly run **Apply rules**. Nothing is applied automatically.
+After connecting hosted review, run **ApprovalLens: Suggest project rules**. Describe the task and inspect the disclosure preview. Nemotron returns an exact-path read/write policy draft and reasons. No source contents are uploaded. Existing restrictions remain in the draft; review it, save to `.approvallens/rules.json` and explicitly run **Apply rules**. Nothing is applied automatically.

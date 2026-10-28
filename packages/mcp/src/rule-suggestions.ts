@@ -11,7 +11,9 @@ const safePath = z
   .refine(
     (p) =>
       !p.split("/").some((s) => s.startsWith(".")) &&
-      !/(secret|credential|password|token|\.pem$|\.key$)/i.test(p),
+      !/(secret|credential|password|token|\.env(?:\.|$)|\.(pem|key|p12|pfx)$)/i.test(
+        p,
+      ),
   );
 export const RuleSuggestionInput = z.strictObject({
   intent: z.string().min(8).max(2000),
@@ -29,7 +31,7 @@ export const RuleSuggestionInput = z.strictObject({
       ]),
     )
     .max(8),
-  paths: z.array(safePath).min(1).max(40),
+  paths: z.array(safePath).min(1).max(800),
 });
 const Suggestion = z.strictObject({
   summary: z.string().min(1).max(800),

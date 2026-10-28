@@ -804,3 +804,23 @@ footer > div {
     margin-inline: 0;
   }
 }
+.state-diagram {
+  margin: 1.5rem 0;
+}
+.state-diagram figcaption {
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+.state-diagram-scroll {
+  overflow-x: auto;
+  background: #eeeee5;
+  border: 1px solid #d0d6cd;
+  border-radius: 16px;
+  padding: 1rem;
+}
+.state-diagram svg {
+  display: block;
+  width: 100%;
+  min-width: 800px;
+  font-family: "DM Sans", sans-serif;
+}

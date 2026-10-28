@@ -184,7 +184,7 @@ export default function Home() {
               [
                 "01",
                 "Rules you control",
-                "Ask Nemotron to draft exact file permissions from selected paths and task intent. Review and explicitly apply them; suggestions never activate themselves.",
+                "Ask Nemotron to draft exact file permissions from automatically collected project paths and task intent. Review and explicitly apply them; suggestions never activate themselves.",
               ],
               [
                 "02",
