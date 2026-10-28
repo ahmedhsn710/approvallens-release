@@ -747,3 +747,59 @@ footer > div {
     transition: none !important;
   }
 }
+/* Technical flows remain readable as ordered lists without layout or animation. */
+.architecture-flow {
+  margin: 2rem 0;
+  padding: 1.4rem;
+  border: 1px solid #39443b;
+  border-radius: 16px;
+  background: #101b16;
+  color: #edf5ef;
+}
+.architecture-flow figcaption {
+  font-weight: 700;
+  margin-bottom: 1.4rem;
+}
+.architecture-flow ol {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 0;
+  list-style: none;
+}
+.architecture-flow li {
+  border: 1px solid #43544a;
+  border-radius: 10px;
+  padding: 1rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+.architecture-flow li span {
+  display: block;
+  color: #bce6aa;
+  margin-bottom: 0.5rem;
+  font-family: monospace;
+}
+.spec-table {
+  overflow-x: auto;
+}
+.spec-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+.spec-table th,
+.spec-table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 1rem;
+  border-bottom: 1px solid #b7beb5;
+}
+@media (max-width: 680px) {
+  .architecture-flow ol {
+    grid-template-columns: 1fr;
+  }
+  .architecture-flow {
+    margin-inline: 0;
+  }
+}

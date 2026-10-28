@@ -172,7 +172,7 @@ function register(vscode, context) {
       {
         modal: true,
         detail:
-          "Eligible actions send intent, explanation, paths and policy-disclosed JSON field evidence to ApprovalLens on Vercel and Nebius. Raw write bodies are omitted. The access token uses a shared limited pilot budget; this is not unlimited public service. Required remote failures deny the action.",
+          "Eligible actions send intent, explanation, paths and policy-disclosed JSON field evidence to ApprovalLens on Vercel and Nebius. Raw write bodies are omitted. The access token enables private hosted inference billed to the service owner; anonymous installs cannot make model calls. Required remote failures deny the action.",
       },
       "Connect",
     );
@@ -234,7 +234,104 @@ function register(vscode, context) {
     await stop();
     await context.workspaceState.update("approvallens.enabled", false);
   }
+  async function suggest() {
+    const root = workspace();
+    const token = await context.secrets.get(secretKey(root));
+    if (!token) throw Error("Connect hosted review first");
+    const { inventory } = require("./inventory.cjs");
+    const {
+      RuleSuggestionInput,
+      validateSuggestion,
+    } = require("./dist/rule-suggestions.cjs");
+    const { assertOutboundSafe } = require("./dist/egress.cjs");
+    const current = parsePolicy(root);
+    const found = inventory(root);
+    const selected = await vscode.window.showQuickPick(found.paths, {
+      canPickMany: true,
+      title: "Select up to 40 files relevant to this task (paths only)",
+    });
+    if (!selected?.length) return;
+    const intent = await vscode.window.showInputBox({
+      prompt:
+        "What should the coding agent accomplish? Do not include secrets.",
+      value: current.developerIntent,
+      ignoreFocusOut: true,
+    });
+    if (!intent) return;
+    const input = RuleSuggestionInput.parse({
+      intent,
+      paths: selected,
+      stack: found.stack,
+    });
+    assertOutboundSafe(input, current.blockedTerms || []);
+    const agree = await vscode.window.showWarningMessage(
+      "Send this inventory to Nemotron?",
+      {
+        modal: true,
+        detail:
+          JSON.stringify(input, null, 2) +
+          "\nOnly these paths, stack labels and intent are sent to Vercel and Nebius. No source contents. The result is an unapplied draft.",
+      },
+      "Suggest rules",
+    );
+    if (agree !== "Suggest rules") return;
+    const result = await vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+        title: "ApprovalLens: drafting rules with Nemotron",
+      },
+      async () => {
+        const response = await fetch(
+          "https://approvallens-release.vercel.app/api/mcp",
+          {
+            method: "POST",
+            redirect: "error",
+            signal: AbortSignal.timeout(55000),
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json, text/event-stream",
+              Authorization: "Bearer " + token,
+            },
+            body: JSON.stringify({
+              jsonrpc: "2.0",
+              id: 1,
+              method: "tools/call",
+              params: { name: "approvallens_suggest_rules", arguments: input },
+            }),
+          },
+        );
+        if (!response.ok) throw Error("Hosted rule suggestion unavailable");
+        const reply = await response.json();
+        const data = reply.result?.structuredContent;
+        if (reply.result?.isError || !data)
+          throw Error("No valid rule suggestion returned");
+        return validateSuggestion(
+          { summary: data.summary, grants: data.reasons },
+          input,
+        );
+      },
+    );
+    // Retain existing restrictions. Suggestions never activate or overwrite policy.
+    const draft = {
+      ...current,
+      developerIntent: input.intent,
+      grants: result.policy.grants,
+    };
+    const document = await vscode.workspace.openTextDocument({
+      language: "json",
+      content: JSON.stringify(draft, null, 2) + "\n",
+    });
+    await vscode.window.showTextDocument(document);
+    output.appendLine("Rule suggestion (not applied): " + result.summary);
+    for (const grant of result.reasons)
+      output.appendLine(`${grant.operation} ${grant.path}: ${grant.reason}`);
+    output.show(true);
+    vscode.window.showInformationMessage(
+      "Draft only. Review grants and restrictions, save to .approvallens/rules.json, then run Apply rules. Existing active policy is unchanged.",
+    );
+  }
   const commands = {
+    suggestRules: suggest,
     enable,
     applyRules: apply,
     connect,

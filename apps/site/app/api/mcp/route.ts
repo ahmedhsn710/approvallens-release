@@ -1,5 +1,9 @@
 import { assertOutboundSafe } from "../../../../../packages/core/src/egress";
 import {
+  RuleSuggestionInput,
+  suggestRules,
+} from "../../../../../packages/mcp/src/rule-suggestions";
+import {
   RemoteReviewInput,
   remoteAnalysis,
 } from "../../../../../packages/mcp/src/remote-review";
@@ -56,7 +60,37 @@ export async function POST(request: Request) {
     return new Response("Invalid JSON", { status: 400 });
   }
   const live = authorized(request);
-  const server = new McpServer({ name: "approvallens", version: "0.6.0" });
+  const server = new McpServer({ name: "approvallens", version: "0.7.0" });
+  if (live)
+    server.registerTool(
+      "approvallens_suggest_rules",
+      {
+        description:
+          "Suggest an unapplied policy draft from developer-selected paths and intent. No file contents, execution or automatic application.",
+        inputSchema: RuleSuggestionInput,
+      },
+      async (input) => {
+        try {
+          assertOutboundSafe(input);
+          if (!(await reserveRemoteCall())) throw Error("Budget unavailable");
+          const result = await suggestRules(input);
+          return {
+            content: [{ type: "text" as const, text: JSON.stringify(result) }],
+            structuredContent: result,
+          };
+        } catch {
+          return {
+            isError: true,
+            content: [
+              {
+                type: "text" as const,
+                text: "Rule suggestion unavailable. No policy was applied.",
+              },
+            ],
+          };
+        }
+      },
+    );
   if (live)
     server.registerTool(
       "approvallens_review_evidence",

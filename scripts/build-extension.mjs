@@ -21,6 +21,22 @@ await build({
   format: "cjs",
 });
 await build({
+  entryPoints: [`${root}packages/mcp/src/rule-suggestions.ts`],
+  outfile: `${out}/rule-suggestions.cjs`,
+  bundle: true,
+  platform: "node",
+  target: "node20",
+  format: "cjs",
+});
+await build({
+  entryPoints: [`${root}packages/core/src/egress.ts`],
+  outfile: `${out}/egress.cjs`,
+  bundle: true,
+  platform: "node",
+  target: "node20",
+  format: "cjs",
+});
+await build({
   entryPoints: [`${root}scripts/cursor-hook.mjs`],
   outfile: `${out}/hook.mjs`,
   bundle: true,

@@ -48,3 +48,7 @@ MIT licensed. Release preview; namespace verification status is shown by Open VS
 Explicitly enable `shellInspection` in rules and apply them. Supported absolute system executables include cat, head, tail, wc, fixed-string grep and pwd, with controlled options. Pipelines and conditional lists check every file and stage. Bare commands, scripts, redirections and network transfers remain denied. Supported reads and outbound review payloads are checked for common credentials and policy `blockedTerms`; this is detection, not guaranteed zero-egress protection.
 
 See the [setup and verification cases](https://approvallens-release.vercel.app/guide). No terminal service is required for installed users.
+
+# Suggested project rules
+
+After connecting hosted review, run **ApprovalLens: Suggest project rules**. Select task-relevant paths, describe the task and inspect the disclosure preview. Nemotron returns an exact-path read/write policy draft and reasons. No source contents are uploaded. Existing restrictions remain in the draft; review it, save to `.approvallens/rules.json` and explicitly run **Apply rules**. Nothing is applied automatically.

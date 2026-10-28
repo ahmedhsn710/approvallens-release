@@ -1,8 +1,7 @@
-# ApprovalLens 0.6.0 — shell inspection and sensitive-data checks
+# ApprovalLens 0.7.0 — suggested project rules
 
-- Opt-in structured shell inspection: literal quoting, pipelines, command lists and bounded read-only adapters for cat, head, tail, wc, grep -F and pwd. Every branch and input file must pass policy; unresolved operations stay blocked.
-- Sensitive-data checks on supported native reads and outgoing MCP/Nebius review evidence. Repository blocked terms complement known credential patterns. Matched values are not echoed in diagnostics.
-- Product-focused website, separate setup/verification and judge pages, and consolidated guidance.
-- Bundled installation remains one extension plus explicit workspace enablement. No separate terminal service is required.
+Nemotron suggests minimal read/write grants from selected paths and task intent. The extension previews outgoing metadata and opens a validated, unapplied policy draft. Existing restrictions are retained; explicit application is required.
 
-279 functional tests pass. macOS/Linux, single local workspace. Arbitrary scripts, network shell commands, redirections and unsupported host tools remain outside allowed coverage. Detection is not a sandbox or zero-egress guarantee. Hosted AI remains a credentialed, quota-limited pilot.
+Adds a public architecture page and removes recording directions from the judge guide. Explicit owner-configured uncapped testing removes the aggregate ceiling for authenticated calls; anonymous inference remains unavailable.
+
+Single local workspace on macOS/Linux. Native interception and shell coverage remain bounded.

@@ -6,11 +6,11 @@ A Cursor extension that checks supported agent file operations against developer
 
 ## Start in Cursor
 
-1. Install ApprovalLens **0.6.0 or newer**. If the registry still shows an older version, install the 0.6.0 VSIX from GitHub Releases. Open one trusted local project on macOS or Linux.
+1. Install ApprovalLens **0.7.0 or newer**. If the registry still shows an older version, install the 0.7.0 VSIX from GitHub Releases. Open one trusted local project on macOS or Linux.
 2. Run **ApprovalLens: Enable for this workspace** and confirm. The extension bundles the companion and installs project hooks, an editable rules file, and the public MCP configuration. No separate Node installation, clone, or terminal service is required.
 3. Edit `.approvallens/rules.json`, then run **ApprovalLens: Apply rules**. The starter permits only reading `package.json`. Exact path grants are intentional; unsupported operations are denied.
 4. Use a supported native Read, whole-file Write, or Delete. Ordinary permitted reads pass locally; eligible mutations wait for your decision. Activity is grouped by chat.
-5. For Nemotron findings, run **ApprovalLens: Connect hosted review** with a privately supplied pilot credential. The token goes into editor SecretStorage. Anonymous installs work in rules-only mode; the pilot has a shared bounded inference quota.
+5. For Nemotron findings, run **ApprovalLens: Connect hosted review** with a privately supplied pilot credential. The token goes into editor SecretStorage. Anonymous installs work in rules-only mode; the owner configures capped or uncapped authenticated testing.
 
 Cursor may ask you to enable the configured MCP or start a new chat. Disable the workspace integration before uninstalling the extension so owned hooks are removed.
 
@@ -67,4 +67,4 @@ Automated functional tests do not establish benchmark accuracy. Verification sta
 
 ## Shell and data checks
 
-Version 0.6.0 adds opt-in read-only shell pipelines, command lists and argument checks, plus sensitive-data inspection before supported reads and remote review transmission. See [shell and egress](docs/SHELL-AND-EGRESS.md) for exact coverage. Follow the [setup guide](https://approvallens-release.vercel.app/guide) for practical verification cases; the [judge walkthrough](https://approvallens-release.vercel.app/judges) is separate.
+Version 0.7.0 adds opt-in read-only shell pipelines, command lists and argument checks, plus sensitive-data inspection before supported reads and remote review transmission. See [shell and egress](docs/SHELL-AND-EGRESS.md) for exact coverage. Follow the [setup guide](https://approvallens-release.vercel.app/guide) for practical verification cases; the [judge walkthrough](https://approvallens-release.vercel.app/judges) is separate.

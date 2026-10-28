@@ -24,28 +24,22 @@ export default function Judges() {
         <section>
           <h2>Start with the installed product</h2>
           <p>
-            Install version 0.6.0 or newer and follow the{" "}
+            Install version 0.7.0 or newer and follow the{" "}
             <Link href="/guide">setup and verification guide</Link> in a
             disposable Cursor project. The companion and hooks are bundled. The
             primary demonstration is a real native tool call waiting for a human
             decision.
           </p>
           <ol>
+            <li>Inspect and explicitly apply project rules.</li>
             <li>
-              <b>0:00–0:40:</b> show exact rules and explain that edits require
-              explicit application.
+              Request a supported file change. Reject it and verify the file
+              remains unchanged.
             </li>
+            <li>Approve a legitimate request once and watch Cursor resume.</li>
             <li>
-              <b>0:40–1:30:</b> request a supported whole-file Write, inspect
-              its evidence, reject and verify that the file remains unchanged.
-            </li>
-            <li>
-              <b>1:30–2:20:</b> repeat, approve once and show Cursor resume.
-              Demonstrate an ungranted or sensitive read being blocked locally.
-            </li>
-            <li>
-              <b>2:20–3:00:</b> show the review mode, shell coverage and
-              limitations.
+              Try an ungranted path or protected field change and inspect the
+              local denial.
             </li>
           </ol>
         </section>
@@ -59,9 +53,10 @@ export default function Judges() {
             execution.
           </p>
           <p>
-            LIVE requires a privately supplied pilot credential and remaining
-            shared quota. Ask the team for access before judging. If quota is
-            unavailable, show RULES_ONLY honestly. A production review has been
+            LIVE requires a privately supplied pilot credential and an available
+            hosted provider. Ask the team for access before judging. If hosted
+            review is unavailable, LIVE actions fail closed; rules-only mode
+            does not demonstrate model inference. A production review has been
             verified, but automated functional tests are not an accuracy
             benchmark.
           </p>

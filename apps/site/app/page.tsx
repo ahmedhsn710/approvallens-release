@@ -298,7 +298,7 @@ export default function Home() {
             <li>
               <b>AI is a bounded pilot.</b> Local rules work without a
               credential. Hosted review requires a private pilot token and
-              available quota.
+              provider availability.
             </li>
           </ul>
         </section>
@@ -327,6 +327,7 @@ export default function Home() {
         <span>Proof before permission.</span>
         <div>
           <a href="/guide">Setup</a>
+          <a href="/architecture">Architecture</a>
           <a href="/judges">Judge guide</a>
           <a href="/privacy">Privacy</a>
           <a href={repo}>GitHub ↗</a>

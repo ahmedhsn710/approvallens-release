@@ -36,6 +36,13 @@ export default function Privacy() {
         <section>
           <h2>Local extension</h2>
           <p>
+            Rule suggestions send only the task intent, stack labels and
+            selected file paths shown in the confirmation preview to Vercel and
+            Nebius. Source and manifest contents are not uploaded for this
+            feature. The returned draft remains local and unapplied until you
+            review, save and explicitly apply it.
+          </p>
+          <p>
             The sidebar talks to a local companion. Local activity and policy
             evidence may be retained on your device. Hooks must be enabled in
             the inspected workspace. Workspace enablement installs the bundled

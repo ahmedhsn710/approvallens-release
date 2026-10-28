@@ -22,6 +22,73 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe("hosted MCP release boundary", () => {
+  it("validates a model draft over authenticated MCP", async () => {
+    vi.stubEnv("APPROVALLENS_LIVE_BUDGET_MODE", "uncapped");
+    vi.stubEnv("APPROVALLENS_JUDGE_TOKEN", "test-judge");
+    vi.stubEnv("NEBIUS_API_KEY", "test");
+    vi.stubEnv("NEBIUS_MODEL", "nvidia/nemotron-3-super-120b-a12b");
+    const fetcher = vi.fn(async () =>
+      Response.json({
+        choices: [
+          {
+            finish_reason: "stop",
+            message: {
+              content: JSON.stringify({
+                summary: "Read requested configuration",
+                grants: [
+                  {
+                    operation: "read_file",
+                    path: "settings.json",
+                    reason: "Inspect settings",
+                  },
+                ],
+              }),
+            },
+          },
+        ],
+      }),
+    );
+    vi.stubGlobal("fetch", fetcher);
+    const response = await POST(
+      request(
+        "tools/call",
+        {
+          name: "approvallens_suggest_rules",
+          arguments: {
+            intent: "Inspect settings",
+            stack: [],
+            paths: ["settings.json"],
+          },
+        },
+        { authorization: "Bearer test-judge" },
+      ),
+    );
+    expect((await response.json()).result.structuredContent).toMatchObject({
+      applied: false,
+      executable: false,
+      policy: { shellInspection: false },
+    });
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it("uncapped admission keeps model tools private", async () => {
+    vi.stubEnv("APPROVALLENS_LIVE_BUDGET_MODE", "uncapped");
+    vi.stubEnv("APPROVALLENS_JUDGE_TOKEN", "test-judge");
+    const fetcher = vi.fn();
+    vi.stubGlobal("fetch", fetcher);
+    expect(await reserveRemoteCall()).toBe(true);
+    const response = await POST(
+      request("tools/call", {
+        name: "approvallens_suggest_rules",
+        arguments: {
+          intent: "Inspect settings",
+          stack: [],
+          paths: ["settings.json"],
+        },
+      }),
+    );
+    expect((await response.json()).result.isError).toBe(true);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it("initializes over Streamable HTTP and exposes only advisory tools", async () => {
     const init = await POST(
       request("initialize", {

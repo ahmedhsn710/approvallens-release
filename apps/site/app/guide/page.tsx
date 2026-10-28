@@ -25,7 +25,7 @@ export default function Guide() {
       </header>
       <main className="guide">
         <div className="section-kicker">
-          SETUP & VERIFICATION / VERSION 0.6.0
+          SETUP & VERIFICATION / VERSION 0.7.0
         </div>
         <h1>
           Your workspace.
@@ -37,12 +37,33 @@ export default function Guide() {
           granting access to real files.
         </p>
         <section>
+          <h2>New: suggest rules for your project</h2>
+          <p>
+            After enabling the workspace and connecting hosted review, run{" "}
+            <b>ApprovalLens: Suggest project rules</b>. Select up to 40 files
+            and describe your task. Preview the exact paths and stack labels
+            before sending them to Nemotron. No file contents are uploaded.
+          </p>
+          <p>
+            Review the unapplied JSON draft and its explanations in the setup
+            output. Save the reviewed draft to{" "}
+            <code>.approvallens/rules.json</code>, then run <b>Apply rules</b>.
+            Existing restrictions are retained. The active guard does not change
+            until you apply the rules.
+          </p>
+          <p>
+            <Link href="/architecture">
+              Explore the architecture and data flow →
+            </Link>
+          </p>
+        </section>
+        <section>
           <h2>1. Install and enable</h2>
           <p>
             In Cursor’s Extensions view, search <b>ApprovalLens</b> by{" "}
-            <b>ahmedhsn710</b>. Install version 0.6.0 or newer. If your library
+            <b>ahmedhsn710</b>. Install version 0.7.0 or newer. If your library
             is still cached,{" "}
-            <a href="https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.6.0">
+            <a href="https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.7.0">
               download the release VSIX
             </a>{" "}
             and use Install from VSIX.
@@ -159,10 +180,10 @@ export default function Guide() {
             authentication without spending a model call.
           </p>
           <p>
-            Hosted AI has a limited shared quota. Local policy checks work
-            without a token. Required LIVE review failures deny the action; they
-            do not silently switch to permission. No separate classifier model
-            is used.
+            Hosted AI requires private access and an available provider. Local
+            policy checks work without a token. Required LIVE review failures
+            deny the action; they do not silently switch to permission. No
+            separate classifier model is used.
           </p>
         </section>
         <section>

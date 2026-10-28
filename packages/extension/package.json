@@ -2,7 +2,7 @@
   "name": "approvallens-cursor",
   "displayName": "ApprovalLens",
   "description": "Native tool review activity and explicit one-time file approvals.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "publisher": "ahmedhsn710",
   "engines": {
     "vscode": "^1.96.0"
@@ -81,6 +81,10 @@
       {
         "command": "approvallens.checkSetup",
         "title": "ApprovalLens: Check setup"
+      },
+      {
+        "command": "approvallens.suggestRules",
+        "title": "ApprovalLens: Suggest project rules"
       }
     ],
     "menus": {
@@ -114,6 +118,11 @@
           "command": "approvallens.checkSetup",
           "when": "view == approvallens.activity",
           "group": "setup"
+        },
+        {
+          "command": "approvallens.suggestRules",
+          "when": "view == approvallens.activity",
+          "group": "setup"
         }
       ],
       "view/item/context": [
@@ -143,7 +152,7 @@
     "viewsWelcome": [
       {
         "view": "approvallens.activity",
-        "contents": "[Enable for this workspace](command:approvallens.enable)\n[Edit rules](command:approvallens.openRules) \u00b7 [Apply rules](command:approvallens.applyRules)\n[Connect hosted review](command:approvallens.connect)\n[Check setup](command:approvallens.checkSetup)"
+        "contents": "[Enable for this workspace](command:approvallens.enable)\n[Edit rules](command:approvallens.openRules) · [Apply rules](command:approvallens.applyRules)\n[Connect hosted review](command:approvallens.connect)\n[Check setup](command:approvallens.checkSetup)"
       }
     ]
   },
@@ -157,7 +166,8 @@
     "prompts.cjs",
     "onboarding.cjs",
     "workspace.cjs",
-    "dist/**"
+    "dist/**",
+    "inventory.cjs"
   ],
   "capabilities": {
     "untrustedWorkspaces": {
@@ -169,7 +179,7 @@
     "url": "https://github.com/ahmedhsn710/approvallens-release.git",
     "directory": "packages/extension"
   },
-  "homepage": "https://github.com/ahmedhsn710/approvallens-release",
+  "homepage": "https://approvallens-release.vercel.app",
   "bugs": {
     "url": "https://github.com/ahmedhsn710/approvallens-release/issues"
   }

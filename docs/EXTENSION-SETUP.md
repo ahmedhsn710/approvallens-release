@@ -1,4 +1,4 @@
-# Bundled workspace integration (0.6.0)
+# Bundled workspace integration (0.7.0)
 
 ## User workflow
 
@@ -52,7 +52,7 @@ The server labels evidence as client-observed, not server-verified. Raw write bo
 - Supported mappings remain Read/whole-file Write/Delete. Shell inspection is opt-in and supports bounded read-only literal pipelines; scripts, network transfers, redirections and other unsupported hook-delivered calls remain denied. Built-in search may not emit compatible hooks. This is a restrictive pilot, not a general daily-driver agent firewall.
 - Current chat prose is not reliably supplied by Cursor. The model uses the applied developer intent; missing explanations are marked unknown.
 - Single local folder only; Windows, remote SSH/containers, and multi-root workspaces are not supported by this onboarding release.
-- No automatic account signup or individual quotas yet. The production pilot keeps the approved three-call aggregate cap. A broadly available AI service requires authentication and per-user quotas before opening access.
+- No automatic account signup or individual quotas yet. The owner can explicitly select authenticated uncapped testing mode. A broadly available AI service requires authentication and per-user quotas before opening access.
 - OS sandboxing, universal interception, and stopping every parallel chat activity are not provided.
 
 ## Verification
