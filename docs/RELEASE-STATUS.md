@@ -1,41 +1,25 @@
-# Verified release status — 27 October 2026
+# Release status — 28 October 2026
 
-## Public surfaces
+## Published 0.6.0
 
-- Source: https://github.com/ahmedhsn710/approvallens-release
-- Product and setup: https://approvallens-release.vercel.app and `/guide`
-- MCP: https://approvallens-release.vercel.app/api/mcp (Streamable HTTP POST)
-- Extension listing: https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor
-- Versioned package: https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.5.0
-- Release workflow: https://github.com/ahmedhsn710/approvallens-release/actions/runs/40490580497
+- [Product](https://approvallens-release.vercel.app), [setup and verification](https://approvallens-release.vercel.app/guide), [judge walkthrough](https://approvallens-release.vercel.app/judges).
+- [Open VSX](https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor): public version API confirms 0.6.0 and verified publisher status.
+- [GitHub release](https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.6.0): versioned VSIX and SHA256SUMS.
+- [Release workflow](https://github.com/ahmedhsn710/approvallens-release/actions/runs/40563763093): all checks and registry upload succeeded.
+- Vercel deployed release source `8cbbbff`; product homepage, setup and separate judge page are live.
 
-Open VSX now reports a **verified publisher**. The namespace request was closed as completed by a maintainer. Token-based publishing remains configured; OIDC migration has not been performed.
+## Verification
 
-The 0.5.0 release workflow passed every check and reported a successful Open VSX upload. Public version API independently confirms 0.5.0 with verified publisher status and a download URL. The GitHub release VSIX checksum matched the published SHA256SUMS and that downloaded artifact installed successfully in Cursor.
+279 functional tests across 27 files passed. Formatting, typechecking, site build and extension packaging passed locally and in release CI. Desktop/mobile layouts were inspected; the mobile guide has no horizontal overflow. Public MCP samples return review/block/block with no execution authority. The release VSIX checksum is verified against SHA256SUMS.
 
-## Validation evidence
+Shell regressions include a harmless real fixture pipeline authorized by the controller, plus blocked network stages, sensitive reads, ungranted conditional branches, symlinks and unsafe flags. These are functional checks, not a benchmark accuracy result or a new live Cursor chat test.
 
-- 238 automated tests across 25 files passed locally and in release CI.
-- Formatting, TypeScript, Next.js production build and VSIX packaging passed.
-- Four bundled onboarding integration tests passed under Cursor's Electron Node runtime.
-- Actual Cursor chat: a native Write paused at ApprovalLens's dialog; approving once resumed the chat and produced the expected file content in a disposable project. This was RULES_ONLY, not a live-model UI test.
-- Final local 0.5.0 VSIX installed successfully in Cursor. Already-open editor windows may need reloading to activate updated code.
-- Vercel deployed implementation commit `73fc462`; the extension-first homepage and guide were inspected in the browser.
-- Production anonymous MCP scenarios: safe change → review, protected-field change → block, outside-scope → block. All were RULES_ONLY and non-executable.
-- Production private native evidence route: 27 October 10:42 UTC, genuine `nvidia/nemotron-3-super-120b-a12b` response through Nebius, 1,508 input + 467 output = 1,975 tokens, about 4.6 seconds. The remote client validated the findings. No execution authorization was granted.
-- Earlier hosted sample LIVE test: 2,453 tokens. Functional smoke tests are not benchmark accuracy results.
+Earlier 0.5.0 verification demonstrated an actual Cursor native Write held for approval and resumed after approval. Production Nemotron evidence review was verified on 27 October: 1,975 tokens, approximately 4.6 seconds, validated findings and no server execution authority. No new paid model call was made for 0.6.0.
 
-## Operational configuration
+The old local extension was uninstalled at the owner's request. Its owned hooks/MCP entry were removed from the disposable onboarding workspace; rules and audit history were preserved. Restart Cursor before a fresh marketplace installation and use a new disposable folder for verification.
 
-Vercel Hobby hosts the website and MCP. A dedicated Upstash Free Redis store preserves aggregate inference reservations. Production secrets hold the Nebius key, pinned model, pilot bearer credential, Redis credentials and three-call cap. No secret is bundled in the extension or committed to source.
+## Operations and remaining limits
 
-Two of the three approved model-call reservations have been used by these tests. One remains unless another authorized caller uses it. Do not clear the counter or raise the limit silently. Public extension installation does not provide unlimited model calls; broad access needs individual authentication and quotas.
+Vercel Hobby serves the app/MCP; Upstash Free Redis preserves aggregate model-call reservations. Keys remain in Production secrets or editor SecretStorage. Two of three approved test reservations were used by earlier tests; one remains unless another authorized caller consumes it. Do not reset the counter or silently raise the cap.
 
-## Outstanding work beyond this beta
-
-- Optional OIDC migration now that namespace ownership is verified.
-- Independent benchmark labeling and a larger judge-testing budget.
-- Windows, remote/multi-root workspaces and broader verified native adapters.
-- Final competition video and submission.
-
-The production dependency audit was clean at the previous release; the development publishing toolchain advisory is documented in SECURITY.md. No new benchmark accuracy or universal interception claim is made.
+Native coverage and sensitive-data detection are bounded, not universal interception or zero-egress guarantees. Individual hosted quotas/authentication, Windows/remote/multi-root support, independent benchmark labeling, optional OIDC publishing and the final competition submission remain outside this release. See SECURITY.md for the previously documented publishing-toolchain advisory.
