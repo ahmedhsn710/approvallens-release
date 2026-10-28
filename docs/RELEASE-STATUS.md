@@ -1,25 +1,26 @@
-# Release status — 28 October 2026
+# Release status — 29 October 2026
 
-## Published 0.6.0
+## 0.7.0
 
-- [Product](https://approvallens-release.vercel.app), [setup and verification](https://approvallens-release.vercel.app/guide), [judge walkthrough](https://approvallens-release.vercel.app/judges).
-- [Open VSX](https://open-vsx.org/extension/ahmedhsn710/approvallens-cursor): public version API confirms 0.6.0 and verified publisher status.
-- [GitHub release](https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.6.0): versioned VSIX and SHA256SUMS.
-- [Release workflow](https://github.com/ahmedhsn710/approvallens-release/actions/runs/40563763093): all checks and registry upload succeeded.
-- Vercel deployed release source `8cbbbff`; product homepage, setup and separate judge page are live.
+Source commit: 023a81d. CI and release workflow succeeded. The versioned GitHub VSIX is available; Open VSX publication was submitted by the release workflow. Registry propagation can lag.
 
-## Verification
+- Product: https://approvallens-release.vercel.app
+- Architecture: https://approvallens-release.vercel.app/architecture
+- Setup: https://approvallens-release.vercel.app/guide
+- Judge verification: https://approvallens-release.vercel.app/judges
+- GitHub release: https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.7.0
+- Release workflow: https://github.com/ahmedhsn710/approvallens-release/actions/runs/40753894641
 
-279 functional tests across 27 files passed. Formatting, typechecking, site build and extension packaging passed locally and in release CI. Desktop/mobile layouts were inspected; the mobile guide has no horizontal overflow. Public MCP samples return review/block/block with no execution authority. The release VSIX checksum is verified against SHA256SUMS.
+## Verified
 
-Shell regressions include a harmless real fixture pipeline authorized by the controller, plus blocked network stages, sensitive reads, ungranted conditional branches, symlinks and unsafe flags. These are functional checks, not a benchmark accuracy result or a new live Cursor chat test.
+285 functional tests across 29 files passed in clean Linux CI, along with formatting, typechecking, site build and extension packaging. Local integration tests encountered restricted temporary paths; CI ran the full suite successfully. Functional checks are not an accuracy benchmark.
 
-Earlier 0.5.0 verification demonstrated an actual Cursor native Write held for approval and resumed after approval. Production Nemotron evidence review was verified on 27 October: 1,975 tokens, approximately 4.6 seconds, validated findings and no server execution authority. No new paid model call was made for 0.6.0.
+A production MCP rule-suggestion call returned a validated, unapplied draft using NVIDIA Nemotron Super on Nebius: 432 tokens, approximately 3.5 seconds. A separate production evidence review returned validated faithful/aligned findings: 1,803 tokens, approximately 3.1 seconds. Neither server response grants execution.
 
-The old local extension was uninstalled at the owner's request. Its owned hooks/MCP entry were removed from the disposable onboarding workspace; rules and audit history were preserved. Restart Cursor before a fresh marketplace installation and use a new disposable folder for verification.
+The owner enabled APPROVALLENS_LIVE_BUDGET_MODE=uncapped in Vercel Production. This bypasses the aggregate Redis call ceiling for authenticated model requests. Authentication, request limits, output-token bounds and timeouts remain enforced; anonymous requests cannot access model tools. Provider costs and limits still apply. The existing capped-mode counter was not reset.
 
-## Operations and remaining limits
+## Remaining verification
 
-Vercel Hobby serves the app/MCP; Upstash Free Redis preserves aggregate model-call reservations. Keys remain in Production secrets or editor SecretStorage. Two of three approved test reservations were used by earlier tests; one remains unless another authorized caller consumes it. Do not reset the counter or silently raise the cap.
+Record the final native Cursor demonstration with the published extension; this release does not claim a new manually exercised native chat session. Earlier 0.5.0 verification demonstrated a native Write held for approval and resumed after approval. Suggested-rule validation and inventory exclusions are tested; the editor draft workflow still needs final user rehearsal. See DEMO.md for the recording plan.
 
-Native coverage and sensitive-data detection are bounded, not universal interception or zero-egress guarantees. Individual hosted quotas/authentication, Windows/remote/multi-root support, independent benchmark labeling, optional OIDC publishing and the final competition submission remain outside this release. See SECURITY.md for the previously documented publishing-toolchain advisory.
+Native coverage is bounded, sensitive-data detection is not a zero-egress guarantee, and arbitrary source-code semantics are not proven. Windows, remote and multi-root workspaces, per-user hosted quotas and independent benchmark labeling remain outside this release.

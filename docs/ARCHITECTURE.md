@@ -39,3 +39,9 @@ Change policy/analysis semantics in shared packages, then exercise them through 
 ## Limits
 
 Supported native mappings are Read/whole-file Write/Delete. Opt-in shell inspection checks supported read-only pipelines and all branches using exact file grants and egress checks. Search coverage depends on host events; unsupported delivered calls fail closed. No OS sandbox, universal interception, per-user hosted quotas, automatic signup or Windows support is claimed. Active policy is explicit developer intent, not an assumed complete transcript of the chat.
+
+## Rule suggestions (0.7.0)
+
+The extension scans bounded path metadata without reading source contents, previews a developer-selected inventory and sends it to the authenticated approvallens_suggest_rules tool. Nemotron proposes exact read/write grants. Both server and client validate them against selected paths. The editor opens an unapplied draft preserving existing restrictions. Saving and explicit Apply rules remain separate developer steps.
+
+The owner can enable authenticated uncapped testing with APPROVALLENS_LIVE_BUDGET_MODE=uncapped. Default capped mode retains the durable reservation counter.

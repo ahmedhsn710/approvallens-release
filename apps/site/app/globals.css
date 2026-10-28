@@ -767,7 +767,8 @@ footer > div {
   padding: 0;
   list-style: none;
 }
-.architecture-flow li {
+.guide .architecture-flow li {
+  color: #edf5ef;
   border: 1px solid #43544a;
   border-radius: 10px;
   padding: 1rem;
