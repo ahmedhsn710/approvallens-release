@@ -1,5 +1,3 @@
-# ApprovalLens 0.7.1 — automatic project inventory
+# ApprovalLens 0.7.2 — scrollable rule-suggestion preview
 
-Rule suggestions now inventory the project automatically without a file picker. Hidden, generated, symlinked and likely sensitive paths are excluded. The preview shows exactly what will be sent; contents are never uploaded. Up to 800 paths and 30 KB of inventory are supported; oversized scans fail explicitly instead of silently truncating. Suggested permissions remain minimal and unapplied.
-
-The website documents every extension command and includes an accessible SVG state diagram with approval, denial, review failure and state-change branches.
+The suggest-rules confirmation opens the file list in a scrollable panel with the confirm button kept on screen.
