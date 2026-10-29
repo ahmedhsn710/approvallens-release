@@ -210,9 +210,9 @@ describe("bundled extension onboarding", () => {
       },
       "nonce-test",
     );
-    expect(html).toContain('id="files"');
-    expect(html).toContain("overflow: auto");
-    expect(html).toContain('id="suggest"');
+    expect(html).toContain('<main tabindex="0">');
+    expect(html).toContain("overflow:auto");
+    expect(html).toContain('data-action="Suggest rules"');
     expect(html).toContain(">Suggest rules<");
     expect(html).toContain("script-src 'nonce-nonce-test'");
     expect(html).toContain("fix &lt;script&gt;alert(1)&lt;/script&gt;");

@@ -1,88 +1,40 @@
+const { showDialog, confirm, dialogHtml } = require("./dialogs.cjs");
 const fs = require("node:fs");
 const path = require("node:path");
 const os = require("node:os");
-const { createHash, randomBytes } = require("node:crypto");
+const { createHash } = require("node:crypto");
 const { spawn } = require("node:child_process");
 const { createConnection } = require("node:net");
 const setup = require("./workspace.cjs");
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
-// Native modal dialogs do not scroll, so a long path list clips Suggest rules.
+// Shared scrollable consent layout; no file contents are sent.
 function inventoryConsentHtml(input, nonce) {
-  const paths = input.paths
-    .map((file) => `<li>${escapeHtml(file)}</li>`)
-    .join("");
-  const stack = input.stack.length
-    ? escapeHtml(input.stack.join(", "))
-    : "none";
-  return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'nonce-${nonce}'; script-src 'nonce-${nonce}';">
-<style nonce="${nonce}">
-  html, body { height: 100%; margin: 0; overflow: hidden; }
-  body { height: 100vh; display: flex; flex-direction: column; box-sizing: border-box; font-family: var(--vscode-font-family); font-size: var(--vscode-font-size); color: var(--vscode-foreground); background: var(--vscode-editor-background); }
-  header, footer { flex: none; padding: 12px 16px; }
-  header p { margin: 0 0 8px; }
-  #files { flex: 1; min-height: 0; overflow: auto; padding: 0 16px 12px; }
-  ul { margin: 0; padding-left: 1.25em; }
-  li { margin: 2px 0; font-family: var(--vscode-editor-font-family, monospace); word-break: break-all; }
-  footer { display: flex; gap: 8px; border-top: 1px solid var(--vscode-panel-border); background: var(--vscode-editor-background); }
-  button { font: inherit; border: 0; padding: 6px 14px; cursor: pointer; color: var(--vscode-button-foreground); background: var(--vscode-button-background); }
-  button:hover { background: var(--vscode-button-hoverBackground); }
-  button.secondary { color: var(--vscode-button-secondaryForeground); background: var(--vscode-button-secondaryBackground); }
-</style>
-</head>
-<body>
-<header>
-  <p><strong>${input.paths.length} paths</strong> will be sent with stack labels (${stack}) and the intent below.</p>
-  <p>Intent: ${escapeHtml(input.intent)}</p>
-  <p>Only these paths, stack labels and intent are sent to Vercel and Nebius. No source contents. The result is an unapplied draft.</p>
-</header>
-<div id="files"><ul>${paths}</ul></div>
-<footer>
-  <button id="suggest" type="button">Suggest rules</button>
-  <button id="cancel" class="secondary" type="button">Cancel</button>
-</footer>
-<script nonce="${nonce}">
-  const vscode = acquireVsCodeApi();
-  document.getElementById("suggest").addEventListener("click", () => vscode.postMessage({ agree: true }));
-  document.getElementById("cancel").addEventListener("click", () => vscode.postMessage({ agree: false }));
-</script>
-</body>
-</html>`;
-}
-function confirmInventory(vscode, input) {
-  const nonce = randomBytes(16).toString("base64url");
-  const panel = vscode.window.createWebviewPanel(
-    "approvallens.inventoryConsent",
+  return dialogHtml(
     "Send this inventory to Nemotron?",
-    vscode.ViewColumn.Active,
-    { enableScripts: true, retainContextWhenHidden: true },
+    inventorySections(input),
+    ["Suggest rules", "Cancel"],
+    nonce,
   );
-  panel.webview.html = inventoryConsentHtml(input, nonce);
-  return new Promise((resolve) => {
-    let settled = false;
-    const subscription = panel.webview.onDidReceiveMessage((body) => {
-      if (!body || (body.agree !== true && body.agree !== false)) return;
-      finish(body.agree === true);
-    });
-    panel.onDidDispose(() => finish(false));
-    function finish(agree) {
-      if (settled) return;
-      settled = true;
-      subscription.dispose();
-      panel.dispose();
-      resolve(agree);
-    }
-  });
+}
+function inventorySections(input) {
+  return [
+    [
+      "Disclosure",
+      "Only these paths, stack labels and intent are sent to Vercel and Nebius. No source contents. The result is an unapplied draft.",
+    ],
+    ["Task intent", input.intent],
+    ["Detected stack", input.stack],
+    [`Project inventory · ${input.paths.length} paths`, input.paths],
+  ];
+}
+async function confirmInventory(vscode, input) {
+  return (
+    (await showDialog(
+      vscode,
+      "Send this inventory to Nemotron?",
+      inventorySections(input),
+      ["Suggest rules", "Cancel"],
+    )) === "Suggest rules"
+  );
 }
 function register(vscode, context) {
   let child,
@@ -192,7 +144,8 @@ function register(vscode, context) {
   async function enable() {
     const root = workspace(),
       policy = parsePolicy(root);
-    const answer = await vscode.window.showWarningMessage(
+    const answer = await confirm(
+      vscode,
       "Enable ApprovalLens for this workspace?",
       {
         modal: true,
@@ -222,7 +175,8 @@ function register(vscode, context) {
   async function apply() {
     const root = workspace(),
       policy = parsePolicy(root);
-    const answer = await vscode.window.showWarningMessage(
+    const answer = await confirm(
+      vscode,
       "Apply these rules to the active guard?",
       { modal: true, detail: JSON.stringify(policy, null, 2) },
       "Apply rules",
@@ -246,7 +200,8 @@ function register(vscode, context) {
       state = stateFor(root);
     if (!context.workspaceState.get("approvallens.enabled"))
       throw Error("Enable this workspace first");
-    const agree = await vscode.window.showWarningMessage(
+    const agree = await confirm(
+      vscode,
       "Enable hosted Nemotron review?",
       {
         modal: true,
@@ -299,7 +254,8 @@ function register(vscode, context) {
   }
   async function disable() {
     const root = workspace();
-    const answer = await vscode.window.showWarningMessage(
+    const answer = await confirm(
+      vscode,
       "Disable ApprovalLens for this workspace?",
       {
         modal: true,

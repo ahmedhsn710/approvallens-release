@@ -167,7 +167,8 @@
     "onboarding.cjs",
     "workspace.cjs",
     "dist/**",
-    "inventory.cjs"
+    "inventory.cjs",
+    "dialogs.cjs"
   ],
   "capabilities": {
     "untrustedWorkspaces": {

@@ -1,3 +1,4 @@
+const { showDialog } = require("./dialogs.cjs");
 const { evidenceLines } = require("./evidence.cjs");
 const { demoPrompts } = require("./prompts.cjs");
 const vscode = require("vscode");
@@ -32,7 +33,6 @@ function activate(context) {
     }
   }
   const changes = new vscode.EventEmitter();
-  const documents = new Map();
   const seen = new Set();
   const started = Date.now();
   let rows = [],
@@ -95,64 +95,69 @@ function activate(context) {
       vscode.window.showWarningMessage("This review expired.");
       return;
     }
-    const uri = vscode.Uri.parse(
-      `approvallens-review:/action/${encodeURIComponent(row.id)}.json`,
+    await showDialog(
+      vscode,
+      "ApprovalLens · Action details",
+      reviewSections(details),
+      ["Close"],
     );
-    documents.set(uri.toString(), JSON.stringify(details, null, 2));
-    if (documents.size > 100) documents.delete(documents.keys().next().value);
-    const doc = await vscode.workspace.openTextDocument(uri);
-    await vscode.window.showTextDocument(doc, {
-      preview: true,
-      preserveFocus: false,
-    });
   }
-  async function decide(row, automatic = false) {
+  function reviewSections(details) {
+    const review = details.modelReview;
+    return [
+      [
+        "Request and decision",
+        {
+          status: labels[details.status] || details.status,
+          reason: details.reason,
+          tool: details.tool,
+          target: details.target,
+          conversation: details.conversationId || "unknown",
+          outcome: details.outcome || "Not reported",
+        },
+      ],
+      ["Proposed operation", details.proposedAction || "Not available"],
+      [
+        "Evidence and limits",
+        {
+          assessment: details.assessment?.evidence || "Not available",
+          observations: evidenceLines(details),
+        },
+      ],
+      [
+        "Hosted model review",
+        review
+          ? {
+              model: details.model || "unknown",
+              measurement: details.semanticReview || "Not reported",
+              context: details.contextNotes || [],
+              disclosure: review.disclosure,
+              intent: review.intent,
+            }
+          : "AI intent review: NOT MEASURED. This is a local review.",
+      ],
+      [
+        "Before you decide",
+        [
+          details.waiting
+            ? "Approve once resumes this waiting tool call. Closing this review denies it."
+            : "Approval permits one identical retry within 30 seconds.",
+          "Model findings are advisory. Raw file contents are omitted; configured JSON field changes may be sent to Nebius.",
+          "Approval is revalidated against the pending request and file state. An expired or changed request is not approved.",
+        ],
+      ],
+    ];
+  }
+  async function decide(row) {
     if (!row?.canApprove) return;
     const details = await rpc("inspect", row.id);
     if (!details?.canApprove) return;
-    const proposed = JSON.stringify(details.proposedAction, null, 2);
-    const review = details.modelReview;
-    const evidence = details.assessment?.evidence;
-    const evidenceSummary = [
-      evidence
-        ? `Evidence: ${evidence.operationCoverage} operation coverage; ${evidence.content.map((item) => `${item.effectId}: ${item.status} (${item.basis})`).join("; ")}. Runtime behavior is not verified.`
-        : "Evidence summary unavailable from this service version.",
-      ...evidenceLines(details),
-    ].join("\n");
-    const findings = review
-      ? [
-          `Model: ${details.model || "unknown"}`,
-          ...(details.contextNotes || []),
-          `Disclosure: ${review.disclosure.fidelity}; intent: ${review.intent.alignment}`,
-          ...review.disclosure.findings.map(
-            (f) => `Disclosure finding: ${f.explanation}`,
-          ),
-          ...review.intent.findings.map(
-            (f) => `Intent finding: ${f.explanation}`,
-          ),
-          ...review.disclosure.unresolvedQuestions.map(
-            (q) => `Uncertain: ${q}`,
-          ),
-          ...review.intent.unresolvedQuestions.map((q) => `Uncertain: ${q}`),
-          "Model findings are advisory. Raw file contents are omitted; configured JSON field changes may be sent to Nebius.",
-        ].join("\n")
-      : "AI intent review: NOT MEASURED.";
-    const tooLong =
-      proposed.length + findings.length + evidenceSummary.length > 6000;
-    const choice = await vscode.window.showWarningMessage(
+    const choice = await showDialog(
+      vscode,
       `ApprovalLens · ${chatLabel(row.conversationId || "legacy")} · ${row.tool}`,
-      {
-        modal: true,
-        detail: `${row.reason}\n\nTarget: ${row.target}\nChat ID: ${row.conversationId || "unknown"}\n\nProposed operation:\n${tooLong ? proposed.slice(0, 6000) + "\n[Truncated — use Inspect details before approving]" : proposed}\n\n${row.waiting ? "Approve resumes this waiting tool call. Closing this dialog denies it." : "Approval allows one identical retry within 30 seconds."}\n${evidenceSummary}\n\n${findings.slice(0, 6000)}`,
-      },
-      ...(!tooLong ? ["Approve once"] : []),
-      "Reject",
-      "Inspect details",
+      reviewSections(details),
+      ["Approve once", "Reject"],
     );
-    if (choice === "Inspect details") {
-      await inspect(row);
-      return;
-    }
     const answer = await rpc(
       choice === "Approve once" ? "approve" : "reject",
       row.id,
@@ -307,13 +312,6 @@ function activate(context) {
     changes,
     badge,
     vscode.window.registerTreeDataProvider("approvallens.activity", provider),
-    vscode.workspace.registerTextDocumentContentProvider(
-      "approvallens-review",
-      {
-        provideTextDocumentContent: (uri) =>
-          documents.get(uri.toString()) || "Review no longer available.",
-      },
-    ),
     vscode.commands.registerCommand("approvallens.copyPrompt", async (text) => {
       await vscode.env.clipboard.writeText(String(text || ""));
       vscode.window.showInformationMessage(
