@@ -25,7 +25,7 @@ export default function Guide() {
       </header>
       <main className="guide">
         <div className="section-kicker">
-          SETUP & VERIFICATION / VERSION 0.7.1
+          SETUP & VERIFICATION / VERSION 0.7.3
         </div>
         <h1>
           Your workspace.
@@ -69,9 +69,9 @@ export default function Guide() {
           <h2>1. Install and enable</h2>
           <p>
             In Cursor’s Extensions view, search <b>ApprovalLens</b> by{" "}
-            <b>ahmedhsn710</b>. Install version 0.7.1 or newer. If your library
+            <b>ahmedhsn710</b>. Install version 0.7.3 or newer. If your library
             is still cached,{" "}
-            <a href="https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.7.1">
+            <a href="https://github.com/ahmedhsn710/approvallens-release/releases/tag/v0.7.3">
               download the release VSIX
             </a>{" "}
             and use Install from VSIX.
